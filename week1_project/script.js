@@ -59,3 +59,74 @@ if (carouselImage && carouselCaption) {
     setInterval(nextPhoto, 3000);
 }
 
+
+/* 留言板：发布、保存、显示和删除 */
+
+const messageInput = document.getElementById("message-input");
+const messageButton = document.getElementById("message-button");
+const messageList = document.getElementById("message-list");
+
+if (messageInput && messageButton && messageList) {
+    // 读取历史留言
+    let messages = JSON.parse(
+        localStorage.getItem("messages") || "[]"
+    );
+
+    // 保存留言到浏览器
+    function saveMessages() {
+        localStorage.setItem(
+            "messages",
+            JSON.stringify(messages)
+        );
+    }
+
+    // 渲染所有留言
+    function renderMessages() {
+        messageList.replaceChildren();
+
+        messages.forEach(function(message, index) {
+            const card = document.createElement("div");
+            card.className = "message-item";
+
+            const content = document.createElement("p");
+            content.className = "message-content";
+            content.textContent = message.text;
+
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "message-delete";
+            deleteButton.type = "button";
+            deleteButton.textContent = "删除";
+
+            deleteButton.addEventListener("click", function() {
+                messages.splice(index, 1);
+                saveMessages();
+                renderMessages();
+            });
+
+            card.append(content, deleteButton);
+            messageList.appendChild(card);
+        });
+    }
+
+    // 发布留言
+    messageButton.addEventListener("click", function() {
+        const text = messageInput.value.trim();
+
+        if (text === "") {
+            alert("请输入留言内容！");
+            return;
+        }
+
+        messages.push({
+            text: text,
+            time: new Date().toLocaleString()
+        });
+
+        saveMessages();
+        renderMessages();
+        messageInput.value = "";
+    });
+
+    // 初次加载时显示历史留言
+    renderMessages();
+}

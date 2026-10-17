@@ -85,3 +85,71 @@ body.home-page {
     object-fit: cover;
     border-radius: 10px;
 }
+
+/* 留言板 */
+.message-board textarea {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    margin: 16px 0 12px;
+    border: 1px solid #d5dbea;
+    border-radius: 8px;
+    font: inherit;
+    resize: vertical;
+}
+
+.message-board textarea:focus {
+    outline: 2px solid #9bb5f5;
+    border-color: #4169c9;
+}
+
+.message-board #message-button {
+    width: auto;
+    min-width: 110px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    background-color: #4169c9;
+    color: white;
+    cursor: pointer;
+}
+
+.message-board #message-button:hover {
+    background-color: #3154ac;
+}
+
+/* 每条留言的卡片 */
+.message-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 14px;
+    margin-top: 12px;
+    border: 1px solid #e1e6f0;
+    border-radius: 10px;
+    background-color: #f8faff;
+}
+
+.message-content {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.message-delete {
+    width: auto;
+    flex-shrink: 0;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background-color: #fff0f0;
+    color: #b42318;
+    cursor: pointer;
+}
+
+.message-delete:hover {
+    background-color: #ffe0e0;
+}
