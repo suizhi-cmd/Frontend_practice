@@ -18,7 +18,7 @@ app.get("/api/health", (req, res) => {
 
 // 只公开前端目录，server 中的密钥文件不会作为网页提供
 app.use(express.static(
-    path.join(__dirname, "../week1_project"),
+    path.join(__dirname, "../personal_homepage"),
     { dotfiles: "deny" }
 ));
 
