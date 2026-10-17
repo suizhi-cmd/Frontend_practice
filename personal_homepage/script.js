@@ -30,16 +30,36 @@ if (carouselImage && carouselCaption) {
     // 保存三张图片的信息
     const photos = [
         {
-            src: "images/草地音乐节.jpg",
-            title: "草地音乐节"
-        },
-        {
             src: "images/校庆志愿者.jpg",
             title: "校庆优秀志愿者"
         },
         {
+            src: "images/出征仪式.jpg",
+            title: "支教队出征仪式"
+        },
+        {
+            src: "images/开营2.jpeg",
+            title: "支教队社区课堂"
+        },
+        {
+            src: "images/校外义卖.jpg",
+            title: "支教队校外义卖活动"
+        },
+        {
+            src: "images/草地音乐节.jpg",
+            title: "草地音乐节"
+        },
+        {
             src: "images/迎新晚会.jpg",
             title: "迎新晚会"
+        },
+        {
+            src: "images/国际交流1.jpg",
+            title: "英国参加国际交流"
+        },
+        {
+            src: "images/国际交流2.jpg",
+            title: "英国交流学习答辩获得成功"
         }
     ];
 

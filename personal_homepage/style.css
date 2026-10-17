@@ -408,3 +408,93 @@ button:disabled {
         height: 230px;
     }
 }
+/* 轮播图：完整显示照片，不拉伸、不裁切 */
+#carousel-image {
+    display: block;
+    width: 100%;
+    height: clamp(240px, 35vw, 420px);
+    object-fit: contain;
+    object-position: center;
+    background: #edf1e9;
+    border: 1px solid #dfe6dc;
+    border-radius: 16px;
+}
+
+#carousel-caption {
+    margin: 16px 0 0;
+    text-align: center;
+    color: #52675b;
+    font-size: 15px;
+}
+/* 照片单独占满一行 */
+.home-container .carousel {
+    grid-column: 1 / -1;
+    grid-row: 2;
+}
+
+/* 留言和助手放到照片下面 */
+.home-container .message-board {
+    grid-column: 1;
+    grid-row: 3;
+}
+
+.home-container .intro-assistant {
+    grid-column: 2;
+    grid-row: 3;
+}
+
+/* 手机上按顺序排列 */
+@media (max-width: 720px) {
+    .home-container .carousel,
+    .home-container .message-board,
+    .home-container .intro-assistant {
+        grid-column: 1;
+        grid-row: auto;
+    }
+
+    .home-container .profile {
+        order: 0;
+    }
+
+    .home-container .carousel {
+        order: 1;
+    }
+
+    .home-container .intro-assistant {
+        order: 2;
+    }
+
+    .home-container .message-board {
+        order: 3;
+    }
+}
+.home-container .profile-editor {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: 760px;
+    justify-self: center;
+}
+
+.profile-editor h1 {
+    text-align: left;
+    font-size: 30px;
+}
+
+.profile-editor label {
+    display: block;
+    margin-top: 18px;
+    font-weight: 600;
+}
+
+.profile-editor textarea {
+    display: block;
+    width: 100%;
+    margin: 8px 0 16px;
+    resize: vertical;
+    white-space: pre-wrap;
+}
+
+#profile-details p {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
