@@ -153,3 +153,258 @@ body.home-page {
 .message-delete:hover {
     background-color: #ffe0e0;
 }
+/* ===== 个人主页美化 ===== */
+
+:root {
+    --main-color: #28664f;
+    --text-color: #203d35;
+    --muted-color: #6c7d73;
+    --border-color: #dfe6dc;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+    color: var(--text-color);
+    line-height: 1.75;
+    background: linear-gradient(135deg, #e7eedf, #f8f6f0);
+}
+
+/* 主页：电脑上采用两栏布局 */
+.home-container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.home-container section {
+    min-width: 0;
+    margin: 0;
+    padding: 28px;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 22px;
+    box-shadow: 0 8px 30px rgba(32, 61, 53, 0.04);
+}
+
+.home-container h2 {
+    margin: 0 0 12px;
+    font-size: 22px;
+    color: var(--text-color);
+}
+
+.home-container p {
+    color: var(--muted-color);
+}
+
+/* 自我介绍：横跨两栏 */
+.home-container .profile {
+    grid-column: 1 / -1;
+    padding: 40px;
+    background: linear-gradient(120deg, #e2ecda, #f4f6eb);
+}
+
+.profile::before {
+    content: "MY LITTLE CORNER / 个人空间";
+    display: block;
+    margin-bottom: 18px;
+    color: var(--main-color);
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.profile h1 {
+    margin: 0 0 24px;
+    text-align: left;
+    color: var(--text-color);
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1.35;
+}
+
+.profile p {
+    margin: 8px 0;
+}
+
+/* 左侧放轮播图和留言板，右侧放助手 */
+.carousel {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.message-board {
+    grid-column: 1;
+    grid-row: 3;
+}
+
+.intro-assistant {
+    grid-column: 2;
+    grid-row: 2 / span 2;
+}
+
+#carousel-image {
+    height: 300px;
+    margin-top: 20px;
+    border-radius: 16px;
+}
+
+#carousel-caption {
+    margin: 14px 0 0;
+    font-size: 14px;
+}
+
+/* 统一输入框 */
+input,
+textarea,
+button {
+    font: inherit;
+}
+
+input,
+.message-board textarea,
+#assistant-question {
+    width: 100%;
+    padding: 14px 16px;
+    color: var(--text-color);
+    background: #fafbf7;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+}
+
+#assistant-question {
+    display: block;
+    min-height: 140px;
+    margin: 10px 0 16px;
+    resize: vertical;
+}
+
+input:focus,
+.message-board textarea:focus,
+#assistant-question:focus {
+    outline: none;
+    border-color: var(--main-color);
+    box-shadow: 0 0 0 4px rgba(40, 102, 79, 0.12);
+}
+
+/* 统一按钮 */
+button,
+.message-board #message-button {
+    padding: 12px 22px;
+    background: var(--main-color);
+    border-radius: 12px;
+    transition: background 0.2s;
+}
+
+button:hover,
+.message-board #message-button:hover {
+    background: #1c503d;
+}
+
+button:focus-visible {
+    outline: 3px solid #91b897;
+    outline-offset: 3px;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+/* 助手回复卡片 */
+.intro-assistant h2::before {
+    content: "✦";
+    margin-right: 10px;
+    color: var(--main-color);
+}
+
+#assistant-form label {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#assistant-reply {
+    min-height: 150px;
+    margin: 24px 0 0;
+    padding: 20px;
+    color: var(--text-color);
+    background: #eef4e9;
+    border: 1px solid #dde8d9;
+    border-radius: 16px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* 留言卡片 */
+.message-item {
+    background: #fafbf7;
+    border-color: var(--border-color);
+    border-radius: 14px;
+}
+
+.message-content {
+    color: var(--text-color);
+}
+
+.message-delete {
+    background: #f5e9e5;
+    color: #985446;
+}
+
+.message-delete:hover {
+    background: #ecd9d2;
+}
+
+/* 登录页同步美化 */
+.login-box {
+    width: min(420px, calc(100% - 32px));
+    padding: 36px;
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(32, 61, 53, 0.08);
+}
+
+.login-box h1 {
+    color: var(--text-color);
+}
+
+/* 手机屏幕改为单栏 */
+@media (max-width: 720px) {
+    .home-container {
+        grid-template-columns: 1fr;
+        padding: 20px 16px 40px;
+        gap: 18px;
+    }
+
+    .home-container section {
+        grid-column: 1;
+        grid-row: auto;
+        padding: 24px;
+    }
+
+    .profile {
+        order: 0;
+    }
+
+    .intro-assistant {
+        order: 1;
+    }
+
+    .carousel {
+        order: 2;
+    }
+
+    .message-board {
+        order: 3;
+    }
+
+    #carousel-image {
+        height: 230px;
+    }
+}
