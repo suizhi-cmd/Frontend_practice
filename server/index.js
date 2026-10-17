@@ -24,8 +24,7 @@ app.use(express.static(
 ));
 
 // 仅允许通过本机地址访问
-app.listen(port, "127.0.0.1", () => {
-    const profilePath = path.join(__dirname, "profile.json");
+const profilePath = path.join(__dirname, "profile.json");
 
 const profileFields = [
     "school",
@@ -105,6 +104,8 @@ app.put("/api/profile", async (req, res) => {
         savingProfile = false;
     }
 });
+
+app.listen(port, "127.0.0.1",() => {
     console.log(`打开个人主页：http://127.0.0.1:${port}/home.html`);
     console.log(`检查后端：http://127.0.0.1:${port}/api/health`);
 });
@@ -197,6 +198,7 @@ ${JSON.stringify(profile)}
 
         res.json({ reply });
     } catch (error) {
+        console.error("聊天接口出错：",error);
         const timedOut = error.name === "TimeoutError";
 
         res.status(502).json({
