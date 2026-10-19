@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 
+interface ProfileSection {
+  title: string
+  content: string
+}
+
 // 定义个人资料的数据结构
 interface Profile {
   school: string
@@ -10,6 +15,7 @@ interface Profile {
   learning: string
   currentProject: string
   pastProjects: string
+  sections: ProfileSection[]
 }
 
 const profile = ref<Profile | null>(null)
@@ -62,6 +68,16 @@ onMounted(async () => {
         <dd>{{ profile[field.key] || '暂未填写' }}</dd>
       </div>
     </dl>
+    <div v-if="profile && !loading && !error" class="intro-sections">
+  <article
+    v-for="(section, index) in profile.sections"
+    :key="index"
+    class="intro-section"
+  >
+    <h2>{{ section.title }}</h2>
+    <p>{{ section.content }}</p>
+  </article>
+</div>
   </section>
 </template>
 
@@ -126,5 +142,22 @@ dd {
     grid-template-columns: 1fr;
     gap: 4px;
   }
+}
+.intro-section {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid #203d3518;
+}
+
+.intro-section h2 {
+  margin: 0 0 12px;
+  font-size: 22px;
+}
+
+.intro-section p {
+  margin: 0;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 </style>

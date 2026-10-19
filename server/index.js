@@ -10,7 +10,7 @@ const app = express();
 const port = Number(process.env.PORT || 3000);
 
 // 让后端可以接收 JSON 格式的消息
-app.use(express.json({ limit: "16kb" }));
+app.use(express.json({ limit: "128kb" }));
 
 // 检查后端是否正常运行，不返回密钥
 app.get("/api/health", (req, res) => {
@@ -39,7 +39,12 @@ const profileFields = [
 // 主页和助手都从这里读取最新资料
 async function readProfile() {
     const text = await fs.readFile(profilePath, "utf8");
-    return JSON.parse(text);
+    const profile = JSON.parse(text);
+    // 旧资料没有 sections 时，默认使用空列表
+    return {
+        ...profile,
+        sections: profile.sections ?? []
+    };
 }
 
 // 访客只能读取公开资料
@@ -81,6 +86,37 @@ app.put("/api/profile", async (req, res) => {
         profile[field] = value.trim();
     }
 
+    // 不传 sections 时表示保留原来的介绍区块
+const sections = req.body?.sections;
+
+if (sections !== undefined) {
+    if (!Array.isArray(sections) || sections.length > 10) {
+        return res.status(400).json({
+            error: "介绍区块必须是列表，最多添加 10 个。"
+        });
+    }
+
+    const valid = sections.every((section) =>
+        section !== null &&
+        typeof section === "object" &&
+        typeof section.title === "string" &&
+        section.title.trim().length > 0 &&
+        section.title.length <= 60 &&
+        typeof section.content === "string" &&
+        section.content.length <= 3000
+    );
+
+    if (!valid) {
+        return res.status(400).json({
+            error: "每个区块需要标题和正文，标题最多 60 字，正文最多 3000 字。"
+        });
+    }
+
+    profile.sections = sections.map((section) => ({
+        title: section.title.trim(),
+        content: section.content.trim()
+    }));
+}
     if (savingProfile) {
         return res.status(409).json({ error: "正在保存，请稍后再试。" });
     }
@@ -88,8 +124,13 @@ app.put("/api/profile", async (req, res) => {
     savingProfile = true;
 
     try {
-        const temporaryPath = `${profilePath}.tmp`;
+    // 旧编辑页不会提交 sections，所以保留已有的区块
+    if (sections === undefined) {
+        const previousProfile = await readProfile();
+        profile.sections = previousProfile.sections;
+    }
 
+    const temporaryPath = `${profilePath}.tmp`;
         await fs.writeFile(
             temporaryPath,
             JSON.stringify(profile, null, 2),
