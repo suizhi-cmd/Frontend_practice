@@ -3,9 +3,15 @@ import { ref } from 'vue'
 import ProfileCard from './components/ProfileCard.vue'
 import PhotoCarousel from './components/PhotoCarousel.vue'
 import ProfileEditor from './components/ProfileEditor.vue'
+import PhotoManager from './components/PhotoManager.vue'
 
 const editing = ref(false)
 const hasUnsavedChanges = ref(false)
+const managingPhotos = ref(false)
+
+function togglePhotos() {
+  managingPhotos.value = !managingPhotos.value
+}
 
 function toggleEditing() {
   if (
@@ -28,17 +34,31 @@ function handleSaved() {
 
 <template>
   <main class="page">
-    <nav class="toolbar" aria-label="资料管理">
-      <button type="button" @click="toggleEditing">
-        {{ editing ? '返回主页' : '编辑个人资料' }}
-      </button>
-    </nav>
+    <nav class="toolbar" aria-label="内容管理">
+  <button
+    v-if="!managingPhotos"
+    type="button"
+    @click="toggleEditing"
+  >
+    {{ editing ? '返回主页' : '编辑个人资料' }}
+  </button>
+
+  <button
+    v-if="!editing"
+    type="button"
+    @click="togglePhotos"
+  >
+    {{ managingPhotos ? '关闭照片管理' : '管理照片' }}
+  </button>
+</nav>
 
     <ProfileEditor
       v-if="editing"
       @saved="handleSaved"
       @dirty="hasUnsavedChanges = $event"
     />
+
+    <PhotoManager v-else-if="managingPhotos" />
 
     <template v-else>
       <ProfileCard :key="profileVersion" />
@@ -60,6 +80,8 @@ function handleSaved() {
 .toolbar {
   display: flex;
   justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .toolbar button {

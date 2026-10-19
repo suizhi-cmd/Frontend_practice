@@ -174,6 +174,112 @@ app.get("/api/photos", async (req, res) => {
     }
 });
 
+// 防止多个保存操作同时修改照片清单
+let savingPhotos = false;
+
+app.put("/api/photos", async (req, res) => {
+    const password = process.env.PROFILE_EDIT_PASSWORD;
+
+    if (!password) {
+        return res.status(503).json({
+            error: "后端尚未设置编辑密码。"
+        });
+    }
+
+    if (req.get("X-Edit-Password") !== password) {
+        return res.status(401).json({
+            error: "编辑密码错误。"
+        });
+    }
+
+    const photos = req.body;
+
+    // 允许空列表，表示暂时不展示照片
+    if (!Array.isArray(photos) || photos.length > 50) {
+        return res.status(400).json({
+            error: "照片清单必须是列表，最多 50 张。"
+        });
+    }
+
+    const valid = photos.every((photo) =>
+        photo !== null &&
+        typeof photo === "object" &&
+        typeof photo.src === "string" &&
+        typeof photo.title === "string" &&
+        photo.title.trim().length > 0 &&
+        photo.title.length <= 100
+    );
+
+    if (!valid) {
+        return res.status(400).json({
+            error: "照片说明不能为空，且不能超过 100 字。"
+        });
+    }
+
+    // 同一张照片不能在清单中重复出现
+    const sources = photos.map((photo) => photo.src);
+
+    if (new Set(sources).size !== sources.length) {
+        return res.status(400).json({
+            error: "照片清单中有重复图片。"
+        });
+    }
+
+    if (savingPhotos) {
+        return res.status(409).json({
+            error: "正在保存照片，请稍后再试。"
+        });
+    }
+
+    savingPhotos = true;
+
+    try {
+        const filePath = path.join(__dirname, "photos.json");
+        const text = await fs.readFile(filePath, "utf8");
+        const existingPhotos = JSON.parse(text);
+
+        if (!Array.isArray(existingPhotos)) {
+            throw new Error("照片清单格式异常");
+        }
+
+        const allowedSources = new Set(
+            existingPhotos.map((photo) => photo.src)
+        );
+
+        // 本阶段仅允许编辑、排序和移出已有照片
+        if (photos.some((photo) => !allowedSources.has(photo.src))) {
+            return res.status(400).json({
+                error: "清单包含未知图片，请刷新页面后重试。"
+            });
+        }
+
+        const cleanPhotos = photos.map((photo) => ({
+            src: photo.src,
+            title: photo.title.trim()
+        }));
+
+        const temporaryPath = `${filePath}.tmp`;
+
+        await fs.writeFile(
+            temporaryPath,
+            JSON.stringify(cleanPhotos, null, 2),
+            "utf8"
+        );
+
+        await fs.rename(temporaryPath, filePath);
+
+        res.json({ message: "照片清单已保存。" });
+    } catch (error) {
+        console.error("保存照片清单失败：", error.message);
+
+        res.status(500).json({
+            error: "保存照片清单失败，请稍后重试。"
+        });
+    } finally {
+        savingPhotos = false;
+    }
+});
+
 app.listen(port, "127.0.0.1",() => {
     console.log(`打开个人主页：http://127.0.0.1:${port}/home.html`);
     console.log(`检查后端：http://127.0.0.1:${port}/api/health`);

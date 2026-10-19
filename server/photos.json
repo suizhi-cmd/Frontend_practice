@@ -1,9 +1,5 @@
 [
   {
-    "src": "/images/校庆志愿者.jpg",
-    "title": "校庆优秀志愿者"
-  },
-  {
     "src": "/images/出征仪式.jpg",
     "title": "支教队出征仪式"
   },
@@ -14,6 +10,10 @@
   {
     "src": "/images/校外义卖.jpg",
     "title": "支教队校外义卖活动"
+  },
+  {
+    "src": "/images/校庆志愿者.jpg",
+    "title": "第69周年校庆优秀志愿者"
   },
   {
     "src": "/images/草地音乐节.jpg",
