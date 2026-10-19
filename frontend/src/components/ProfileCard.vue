@@ -4,6 +4,7 @@ import { onMounted, ref } from 'vue'
 interface ProfileSection {
   title: string
   content: string
+  type?: 'intro' | 'project'
 }
 
 // 定义个人资料的数据结构
@@ -70,7 +71,9 @@ onMounted(async () => {
     </dl>
     <div v-if="profile && !loading && !error" class="intro-sections">
   <article
-    v-for="(section, index) in profile.sections"
+    v-for="(section, index) in profile.sections.filter(
+  item => item.type !== 'project'
+)"
     :key="index"
     class="intro-section"
   >

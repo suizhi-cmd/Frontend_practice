@@ -139,9 +139,10 @@ if (sections !== undefined) {
     }
 
     profile.sections = sections.map((section) => ({
-        title: section.title.trim(),
-        content: section.content.trim()
-    }));
+    title: section.title.trim(),
+    content: section.content.trim(),
+    type: section.type === "project" ? "project" : "intro"
+}));
 }
     if (savingProfile) {
         return res.status(409).json({ error: "正在保存，请稍后再试。" });

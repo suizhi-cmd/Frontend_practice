@@ -4,6 +4,7 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 interface Section {
   title: string
   content: string
+  type?: 'intro' | 'project'
 }
 
 interface Profile {
@@ -87,8 +88,9 @@ function addSection() {
   if (!profile.value || profile.value.sections.length >= 10) return
 
   profile.value.sections.push({
-    title: '',
-    content: '',
+  title: '',
+  content: '',
+  type: 'intro',
   })
 }
 
@@ -183,6 +185,19 @@ async function saveProfile() {
           :key="index"
           class="section-editor"
         >
+        <label>
+          内容类型
+          <select
+          :value="section.type ?? 'intro'"
+          @change="section.type =
+          ($event.target as HTMLSelectElement).value === 'project'
+           ? 'project'
+           : 'intro'"
+          >
+    <option value="intro">普通介绍</option>
+    <option value="project">项目经历</option>
+  </select>
+</label>
           <label>
             区块标题
             <input
@@ -365,5 +380,21 @@ button:focus-visible {
   fieldset {
     padding: 12px;
   }
+}
+select {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px;
+  border: 1px solid #dfe6dc;
+  border-radius: 10px;
+  background: #fafbf7;
+  color: #203d35;
+  font: inherit;
+}
+
+select:focus-visible {
+  outline: 2px solid #91b897;
+  outline-offset: 2px;
 }
 </style>

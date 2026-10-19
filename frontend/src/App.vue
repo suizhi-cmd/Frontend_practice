@@ -6,6 +6,7 @@ import ProfileEditor from './components/ProfileEditor.vue'
 import PhotoManager from './components/PhotoManager.vue'
 import IntroAssistant from './components/IntroAssistant.vue'
 import MessageBoard from './components/MessageBoard.vue'
+import ProjectShowcase from './components/ProjectShowcase.vue'
 
 const editing = ref(false)
 const hasUnsavedChanges = ref(false)
@@ -52,6 +53,7 @@ function handleSaved() {
           <a href="#top">生活相册</a>
           <a href="#assistant">问问助手</a>
           <a href="#messages">留言板</a>
+          <a href="#projects">项目经历</a>
         </nav>
 
         <div class="management">
@@ -113,6 +115,21 @@ function handleSaved() {
 
           <ProfileCard :key="profileVersion" />
         </section>
+        <!-- 新增：项目经历 -->
+<section
+  id="projects"
+  class="chapter"
+  aria-labelledby="projects-title"
+>
+  <header class="chapter-heading">
+    <h2 id="projects-title">把想法变成作品。</h2>
+    <span class="accent-line"></span>
+  </header>
+
+  <ProjectShowcase :key="profileVersion" />
+</section>
+
+<!-- AI 助手 -->
 <section id="assistant" class="chapter">
   <IntroAssistant />
 </section>
