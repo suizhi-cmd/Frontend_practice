@@ -146,6 +146,34 @@ if (sections !== undefined) {
     }
 });
 
+// 读取公开照片列表
+app.get("/api/photos", async (req, res) => {
+    try {
+        const filePath = path.join(__dirname, "photos.json");
+        const text = await fs.readFile(filePath, "utf8");
+        const photos = JSON.parse(text);
+
+        if (
+            !Array.isArray(photos) ||
+            !photos.every((photo) =>
+                photo !== null &&
+                typeof photo === "object" &&
+                typeof photo.src === "string" &&
+                typeof photo.title === "string"
+            )
+        ) {
+            throw new Error("照片清单格式不正确");
+        }
+
+        res.set("Cache-Control", "no-store");
+        res.json(photos);
+    } catch {
+        res.status(500).json({
+            error: "读取照片列表失败，请检查 photos.json。"
+        });
+    }
+});
+
 app.listen(port, "127.0.0.1",() => {
     console.log(`打开个人主页：http://127.0.0.1:${port}/home.html`);
     console.log(`检查后端：http://127.0.0.1:${port}/api/health`);

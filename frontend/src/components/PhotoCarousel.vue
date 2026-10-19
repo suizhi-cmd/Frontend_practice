@@ -6,36 +6,68 @@ interface Photo {
   title: string
 }
 
-const photos: Photo[] = [
-  { src: '/images/校庆志愿者.jpg', title: '校庆优秀志愿者' },
-  { src: '/images/出征仪式.jpg', title: '支教队出征仪式' },
-  { src: '/images/开营2.jpeg', title: '支教队社区课堂' },
-  { src: '/images/校外义卖.jpg', title: '支教队校外义卖活动' },
-  { src: '/images/草地音乐节.jpg', title: '草地音乐节' },
-  { src: '/images/迎新晚会.jpg', title: '迎新晚会' },
-  { src: '/images/国际交流1.jpg', title: '英国参加国际交流' },
-  { src: '/images/国际交流2.jpg', title: '英国交流学习答辩获得成功' },
-]
+const photos = ref<Photo[]>([])
+const loading = ref(true)
+const error = ref('')
 
 const currentIndex = ref(0)
 const paused = ref(false)
 
-const currentPhoto = computed(() => photos[currentIndex.value])
+const currentPhoto = computed(() => photos.value[currentIndex.value])
 
 function changePhoto(step: number) {
+  if (photos.value.length === 0) return
+
   currentIndex.value =
-    (currentIndex.value + step + photos.length) % photos.length
+    (currentIndex.value + step + photos.value.length) %
+    photos.value.length
 }
 
 let timer: ReturnType<typeof setInterval> | undefined
+let active = true
 
-onMounted(() => {
+onMounted(async () => {
+  try {
+    const response = await fetch('/api/photos', {
+      cache: 'no-store',
+    })
+
+    if (!response.ok) {
+      throw new Error('读取照片失败，请确认后端正常运行。')
+    }
+
+    const data: unknown = await response.json()
+
+    if (
+      !Array.isArray(data) ||
+      !data.every((photo) =>
+        photo !== null &&
+        typeof photo === 'object' &&
+        typeof photo.src === 'string' &&
+        typeof photo.title === 'string'
+      )
+    ) {
+      throw new Error('照片列表格式不正确。')
+    }
+
+    photos.value = data
+  } catch (err) {
+    error.value =
+      err instanceof Error ? err.message : '读取照片失败。'
+  } finally {
+    loading.value = false
+  }
+
+  // 异步读取结束前，组件可能已被移除
+  if (!active || photos.value.length < 2) return
+
   timer = setInterval(() => {
     if (!paused.value) changePhoto(1)
   }, 4000)
 })
 
 onUnmounted(() => {
+  active = false
   if (timer !== undefined) clearInterval(timer)
 })
 </script>
@@ -48,12 +80,16 @@ onUnmounted(() => {
       <p>把值得记住的瞬间，留在这里。</p>
     </header>
 
+<p v-if="loading" role="status">正在加载照片…</p>
+<p v-else-if="error" role="alert">{{ error }}</p>
+<p v-else-if="photos.length === 0">还没有添加照片。</p>
+
     <figure v-if="currentPhoto">
       <img :src="currentPhoto.src" :alt="currentPhoto.title">
       <figcaption>{{ currentPhoto.title }}</figcaption>
     </figure>
 
-    <div class="controls">
+    <div v-if="photos.length > 0" class="controls">
       <button type="button" @click="changePhoto(-1)">上一张</button>
       <span>{{ currentIndex + 1 }} / {{ photos.length }}</span>
       <button type="button" @click="changePhoto(1)">下一张</button>
