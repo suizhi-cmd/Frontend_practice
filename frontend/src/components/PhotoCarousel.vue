@@ -74,11 +74,9 @@ onUnmounted(() => {
 
 <template>
   <section class="carousel">
-    <header>
-      <span class="eyebrow">LIFE IN FRAMES</span>
-      <h2>我的校园与生活</h2>
-      <p>把值得记住的瞬间，留在这里。</p>
-    </header>
+<header>
+  <h2>生活相册</h2>
+</header>
 
 <p v-if="loading" role="status">正在加载照片…</p>
 <p v-else-if="error" role="alert">{{ error }}</p>
@@ -177,6 +175,43 @@ button:focus-visible {
 @media (max-width: 600px) {
   .carousel {
     padding: 20px;
+  }
+}
+.carousel {
+  min-width: 0;
+  padding: 18px;
+  border-radius: 20px;
+  box-shadow: 0 12px 32px #203d3508;
+}
+
+h2 {
+  margin: 0 0 14px;
+  font-size: 20px;
+}
+
+img {
+  height: clamp(240px, 28vw, 360px);
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+figcaption {
+  padding: 12px 0;
+  font-size: 16px;
+}
+
+.controls {
+  gap: 8px;
+}
+
+button {
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+@media (max-width: 760px) {
+  img {
+    height: 280px;
   }
 }
 </style>

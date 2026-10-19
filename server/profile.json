@@ -2,9 +2,18 @@
   "school": "电子科技大学",
   "college": "信息与软件工程学院",
   "major": "软件工程（人工智能+复合型专业）",
-  "interests": "吃喝玩乐，听音乐，看小说",
+  "interests": "吃喝玩乐，听音乐，打羽毛球🏸",
   "learning": "前端开发，学习计算机编译原理，组成原理，正在备考中...",
   "currentProject": "综设项目：个人网贷 AI 风控系统",
   "pastProjects": "大一下学期的 PBLF 项目",
-  "sections": []
+  "sections": [
+    {
+      "title": "个人优势",
+      "content": "组织协调能力，语言表达能力"
+    },
+    {
+      "title": "获奖经历",
+      "content": ""
+    }
+  ]
 }

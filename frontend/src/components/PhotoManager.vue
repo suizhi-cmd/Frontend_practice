@@ -11,6 +11,12 @@ const password = ref('')
 const loading = ref(true)
 const saving = ref(false)
 const status = ref('正在读取照片…')
+const selectedFile = ref<File | null>(null)
+const fileInput = ref<HTMLInputElement | null>(null)
+const uploadTitle = ref('')
+const uploading = ref(false)
+const ready = ref(false)
+const savedSnapshot = ref('')
 
 onMounted(async () => {
   try {
@@ -35,6 +41,8 @@ onMounted(async () => {
     }
 
     photos.value = data
+    savedSnapshot.value = JSON.stringify(photos.value)
+    ready.value = true
     status.value = ''
   } catch (error) {
     status.value =
@@ -61,7 +69,7 @@ function removePhoto(index: number) {
 }
 
 async function savePhotos() {
-  if (saving.value) return
+  if (saving.value || uploading.value || !ready.value) return
 
   saving.value = true
   status.value = '正在保存…'
@@ -82,6 +90,7 @@ async function savePhotos() {
       throw new Error(data.error || '保存失败。')
     }
 
+    savedSnapshot.value = JSON.stringify(photos.value)
     password.value = ''
     status.value = '保存成功！关闭管理界面后，轮播会重新加载。'
   } catch (error) {
@@ -91,6 +100,82 @@ async function savePhotos() {
     saving.value = false
   }
 }
+function selectPhoto(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+
+  selectedFile.value = null
+
+  if (!file) return
+
+  if (file.size > 10 * 1024 * 1024) {
+    status.value = '照片不能超过 10 MB。'
+    input.value = ''
+    return
+  }
+
+  selectedFile.value = file
+  status.value = ''
+}
+
+async function uploadPhoto() {
+  if (uploading.value || saving.value || !ready.value) return
+
+  if (JSON.stringify(photos.value) !== savedSnapshot.value) {
+    status.value = '请先保存已修改的照片说明或顺序，再上传新照片。'
+    return
+  }
+
+  if (!selectedFile.value || !uploadTitle.value.trim()) {
+    status.value = '请选择照片并填写说明。'
+    return
+  }
+
+  if (photos.value.length >= 50) {
+    status.value = '轮播最多保留 50 张照片。'
+    return
+  }
+
+  uploading.value = true
+  status.value = '正在上传并处理图片，请稍候…'
+
+  try {
+    const formData = new FormData()
+    formData.append('photo', selectedFile.value)
+    formData.append('title', uploadTitle.value.trim())
+
+    const response = await fetch('/api/photos/upload', {
+      method: 'POST',
+      headers: {
+        'X-Edit-Password': password.value,
+      },
+      body: formData,
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.error || '上传失败。')
+    }
+
+    // 上传接口已经保存了清单，不需要再次点击保存
+    photos.value.push(data.photo)
+    savedSnapshot.value = JSON.stringify(photos.value)
+
+    selectedFile.value = null
+    uploadTitle.value = ''
+    password.value = ''
+
+    if (fileInput.value) fileInput.value.value = ''
+
+    status.value = '上传成功！关闭照片管理后即可查看新照片。'
+  } catch (error) {
+    status.value =
+      error instanceof Error ? error.message : '上传失败，请重试。'
+  } finally {
+    uploading.value = false
+  }
+}
 </script>
 
 <template>
@@ -98,8 +183,47 @@ async function savePhotos() {
     <h2>管理照片</h2>
     <p>修改说明、调整顺序或移出轮播后，需要点击保存。</p>
 
-    <form v-if="!loading" @submit.prevent="savePhotos">
-      <fieldset :disabled="saving">
+<form v-if="ready" @submit.prevent="uploadPhoto">
+  <fieldset :disabled="uploading || saving">
+    <legend>上传新照片</legend>
+
+    <p>支持 JPG、PNG、WebP，单张不超过 10 MB。</p>
+
+    <label for="upload-photo">选择照片</label>
+    <input
+      id="upload-photo"
+      ref="fileInput"
+      type="file"
+      accept="image/jpeg,image/png,image/webp"
+      required
+      @change="selectPhoto"
+    >
+
+    <label for="upload-title">照片说明</label>
+    <input
+      id="upload-title"
+      v-model="uploadTitle"
+      maxlength="100"
+      required
+    >
+
+    <label for="upload-password">编辑密码</label>
+    <input
+      id="upload-password"
+      v-model="password"
+      type="password"
+      autocomplete="current-password"
+      required
+    >
+
+    <button class="save" type="submit">
+      {{ uploading ? '正在上传…' : '上传并加入轮播' }}
+    </button>
+  </fieldset>
+</form>
+
+    <form v-if="ready" @submit.prevent="savePhotos">
+      <fieldset :disabled="saving || uploading">
         <legend>轮播清单</legend>
 
         <p v-if="photos.length === 0">当前清单没有照片。</p>

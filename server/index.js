@@ -2,12 +2,38 @@ const express = require("express");
 const dotenv = require("dotenv");
 const path = require("node:path");
 const fs = require("node:fs/promises");
+const multer = require("multer");
+const sharp = require("sharp");
+const { randomUUID } = require("node:crypto");
 
 // 从本文件所在目录读取密钥配置
 dotenv.config({ path: path.join(__dirname, ".env") });
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
+// 新上传的图片统一存放在后端目录
+const uploadsPath = path.join(__dirname, "uploads");
+
+// 接收单张图片，最大 10 MB
+const receivePhoto = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 10 * 1024 * 1024,
+        files: 1,
+        fields: 1,
+        fieldSize: 1024,
+        parts: 2
+    }
+}).single("photo");
+
+// 只公开 uploads 目录，不公开整个 server 目录
+app.use("/uploads", express.static(uploadsPath, {
+    dotfiles: "deny",
+    index: false,
+    setHeaders(res) {
+        res.setHeader("X-Content-Type-Options", "nosniff");
+    }
+}));
 
 // 让后端可以接收 JSON 格式的消息
 app.use(express.json({ limit: "128kb" }));
@@ -280,10 +306,166 @@ app.put("/api/photos", async (req, res) => {
     }
 });
 
-app.listen(port, "127.0.0.1",() => {
-    console.log(`打开个人主页：http://127.0.0.1:${port}/home.html`);
-    console.log(`检查后端：http://127.0.0.1:${port}/api/health`);
+app.post("/api/photos/upload", (req, res) => {
+    const password = process.env.PROFILE_EDIT_PASSWORD;
+
+    // 先验证密码，再接收文件
+    if (!password) {
+        return res.status(503).json({
+            error: "后端尚未设置编辑密码。"
+        });
+    }
+
+    if (req.get("X-Edit-Password") !== password) {
+        return res.status(401).json({
+            error: "编辑密码错误。"
+        });
+    }
+
+    // 与修改照片清单共用同一把保存锁
+    if (savingPhotos) {
+        return res.status(409).json({
+            error: "正在处理照片，请稍后重试。"
+        });
+    }
+
+    savingPhotos = true;
+
+    receivePhoto(req, res, async (uploadError) => {
+        let newFilePath;
+        let committed = false;
+
+        try {
+            if (uploadError) {
+                return res.status(400).json({
+                    error: uploadError.code === "LIMIT_FILE_SIZE"
+                        ? "照片不能超过 10 MB。"
+                        : "上传失败，每次请选择一张照片和一条说明。"
+                });
+            }
+
+            if (!req.file) {
+                return res.status(400).json({
+                    error: "请先选择照片。"
+                });
+            }
+
+            const title = req.body?.title;
+
+            if (
+                typeof title !== "string" ||
+                !title.trim() ||
+                title.length > 100
+            ) {
+                return res.status(400).json({
+                    error: "请填写 1～100 字的照片说明。"
+                });
+            }
+
+            const listPath = path.join(__dirname, "photos.json");
+            const text = await fs.readFile(listPath, "utf8");
+            const photos = JSON.parse(text);
+
+            if (!Array.isArray(photos)) {
+                throw new Error("照片清单格式异常");
+            }
+
+            if (photos.length >= 50) {
+                return res.status(400).json({
+                    error: "轮播最多保留 50 张照片。"
+                });
+            }
+
+            let imageBuffer;
+
+            try {
+                // 检查实际图片内容，限制像素数量
+                const image = sharp(req.file.buffer, {
+                    limitInputPixels: 25000000
+                });
+
+                const metadata = await image.metadata();
+
+                if (!["jpeg", "png", "webp"].includes(metadata.format)) {
+                    return res.status(400).json({
+                        error: "目前仅支持 JPG、PNG 和 WebP 图片。"
+                    });
+                }
+
+                if ((metadata.pages || 1) > 1) {
+                    return res.status(400).json({
+                        error: "暂不支持动图，请选择静态照片。"
+                    });
+                }
+
+                imageBuffer = await image
+                    .rotate()
+                    .resize({
+                        width: 1920,
+                        height: 1920,
+                        fit: "inside",
+                        withoutEnlargement: true
+                    })
+                    .webp({ quality: 85 })
+                    .toBuffer();
+            } catch {
+                return res.status(400).json({
+                    error: "图片无法解析或超过 2500 万像素，请缩小后重试。"
+                });
+            }
+
+            await fs.mkdir(uploadsPath, { recursive: true });
+
+            const filename = `${randomUUID()}.webp`;
+            newFilePath = path.join(uploadsPath, filename);
+
+            await fs.writeFile(newFilePath, imageBuffer, {
+                flag: "wx"
+            });
+
+            const photo = {
+                src: `/uploads/${filename}`,
+                title: title.trim()
+            };
+
+            photos.push(photo);
+
+            const temporaryPath = `${listPath}.tmp`;
+
+            await fs.writeFile(
+                temporaryPath,
+                JSON.stringify(photos, null, 2),
+                "utf8"
+            );
+
+            await fs.rename(temporaryPath, listPath);
+            committed = true;
+
+            res.status(201).json({
+                message: "上传成功，照片已加入轮播。",
+                photo
+            });
+        } catch (error) {
+            console.error("上传照片失败：", error.message);
+
+            res.status(500).json({
+                error: "保存照片失败，请稍后重试。"
+            });
+        } finally {
+            // 清单保存失败时，清理本次新建的图片
+            try {
+                if (newFilePath && !committed) {
+                    await fs.unlink(newFilePath);
+                }
+            } catch {
+                console.error("本次上传的临时图片清理失败。");
+            } finally {
+                savingPhotos = false;
+            }
+        }
+    });
 });
+
 // 接收网页的问题，再由后端调用 DeepSeek
 app.post("/api/chat", async (req, res) => {
     const message = req.body?.message;
@@ -382,4 +564,9 @@ ${JSON.stringify(profile)}
                 : "连接 DeepSeek 失败，请检查网络后重试。"
         });
     }
+});
+
+app.listen(port, "127.0.0.1",() => {
+    console.log(`打开个人主页：http://127.0.0.1:${port}/home.html`);
+    console.log(`检查后端：http://127.0.0.1:${port}/api/health`);
 });
