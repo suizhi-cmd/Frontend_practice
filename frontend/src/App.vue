@@ -4,6 +4,8 @@ import ProfileCard from './components/ProfileCard.vue'
 import PhotoCarousel from './components/PhotoCarousel.vue'
 import ProfileEditor from './components/ProfileEditor.vue'
 import PhotoManager from './components/PhotoManager.vue'
+import IntroAssistant from './components/IntroAssistant.vue'
+import MessageBoard from './components/MessageBoard.vue'
 
 const editing = ref(false)
 const hasUnsavedChanges = ref(false)
@@ -48,6 +50,8 @@ function handleSaved() {
         >
           <a href="#about">关于我</a>
           <a href="#top">生活相册</a>
+          <a href="#assistant">问问助手</a>
+          <a href="#messages">留言板</a>
         </nav>
 
         <div class="management">
@@ -99,7 +103,7 @@ function handleSaved() {
 
   <PhotoCarousel />
 </section>
-
+        
         <!-- 个人介绍 -->
         <section id="about" class="chapter" aria-labelledby="about-title">
           <header class="chapter-heading">
@@ -109,7 +113,13 @@ function handleSaved() {
 
           <ProfileCard :key="profileVersion" />
         </section>
+<section id="assistant" class="chapter">
+  <IntroAssistant />
+</section>
 
+<section id="messages" class="chapter">
+  <MessageBoard />
+</section>
       </template>
     </main>
 

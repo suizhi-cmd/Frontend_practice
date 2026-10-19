@@ -87,6 +87,25 @@ onUnmounted(() => {
       <figcaption>{{ currentPhoto.title }}</figcaption>
     </figure>
 
+    <div
+    v-if="photos.length > 1"
+    class="thumbnails"
+    aria-label="选择照片"
+    >
+    <button
+    v-for="(photo, index) in photos"
+    :key="photo.src"
+    type="button"
+    class="thumbnail"
+    :class="{ selected: currentIndex === index }"
+    :aria-label="`查看第 ${index + 1} 张：${photo.title}`"
+    :aria-pressed="currentIndex === index"
+    @click="currentIndex = index; paused = true"
+    >
+    <img :src="photo.src" alt="" loading="lazy">
+  </button>
+</div>
+
     <div v-if="photos.length > 0" class="controls">
       <button type="button" @click="changePhoto(-1)">上一张</button>
       <span>{{ currentIndex + 1 }} / {{ photos.length }}</span>
@@ -213,5 +232,43 @@ button {
   img {
     height: 280px;
   }
+}
+.thumbnails {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 6px 4px 12px;
+  margin-bottom: 10px;
+}
+
+.thumbnail {
+  flex: 0 0 76px;
+  padding: 3px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: #edf1e9;
+  cursor: pointer;
+}
+
+.thumbnail img {
+  display: block;
+  width: 100%;
+  height: 54px;
+  object-fit: contain;
+  border-radius: 5px;
+}
+
+.thumbnail:hover {
+  background: #dfe8d7;
+}
+
+.thumbnail.selected {
+  border-color: #28664f;
+  background: #dfe8d7;
+}
+
+.thumbnail:focus-visible {
+  outline: 3px solid #b8794f;
+  outline-offset: 2px;
 }
 </style>
