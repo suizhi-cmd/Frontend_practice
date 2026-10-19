@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
 interface Section {
   title: string
@@ -31,12 +31,41 @@ const fields: { key: BasicField; label: string }[] = [
 
 const emit = defineEmits<{
   saved: []
+  dirty: [value: boolean]
 }>()
 
 const profile = ref<Profile | null>(null)
 const password = ref('')
 const status = ref('正在读取资料…')
 const saving = ref(false)
+// 记录最近一次读取或保存成功时的资料
+const savedSnapshot = ref('')
+
+const hasChanges = computed(() =>
+  profile.value !== null &&
+  JSON.stringify(profile.value) !== savedSnapshot.value
+)
+
+// 将“是否有未保存修改”通知首页
+watch(hasChanges, (value) => {
+  emit('dirty', value)
+})
+
+// 刷新或关闭网页时，触发浏览器自己的确认提示
+function warnBeforeLeave(event: BeforeUnloadEvent) {
+  if (!hasChanges.value) return
+
+  event.preventDefault()
+  event.returnValue = ''
+}
+
+onMounted(() => {
+  window.addEventListener('beforeunload', warnBeforeLeave)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('beforeunload', warnBeforeLeave)
+})
 
 onMounted(async () => {
   try {
@@ -47,6 +76,7 @@ onMounted(async () => {
     if (!response.ok) throw new Error('读取资料失败，请刷新重试。')
 
     profile.value = await response.json()
+    savedSnapshot.value = JSON.stringify(profile.value)
     status.value = ''
   } catch {
     status.value = '无法读取资料，请确认后端正在运行。'
@@ -108,6 +138,7 @@ async function saveProfile() {
       throw new Error(data.error || '保存失败。')
     }
 
+    savedSnapshot.value = JSON.stringify(profile.value)
     password.value = ''
     status.value = '保存成功，主页资料已更新。'
     emit('saved')

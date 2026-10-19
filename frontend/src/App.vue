@@ -5,6 +5,20 @@ import PhotoCarousel from './components/PhotoCarousel.vue'
 import ProfileEditor from './components/ProfileEditor.vue'
 
 const editing = ref(false)
+const hasUnsavedChanges = ref(false)
+
+function toggleEditing() {
+  if (
+    editing.value &&
+    hasUnsavedChanges.value &&
+    !window.confirm('资料尚未保存，确定放弃修改并返回主页吗？')
+  ) {
+    return
+  }
+
+  hasUnsavedChanges.value = false
+  editing.value = !editing.value
+}
 const profileVersion = ref(0)
 
 function handleSaved() {
@@ -15,7 +29,7 @@ function handleSaved() {
 <template>
   <main class="page">
     <nav class="toolbar" aria-label="资料管理">
-      <button type="button" @click="editing = !editing">
+      <button type="button" @click="toggleEditing">
         {{ editing ? '返回主页' : '编辑个人资料' }}
       </button>
     </nav>
@@ -23,6 +37,7 @@ function handleSaved() {
     <ProfileEditor
       v-if="editing"
       @saved="handleSaved"
+      @dirty="hasUnsavedChanges = $event"
     />
 
     <template v-else>
