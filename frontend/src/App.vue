@@ -147,7 +147,7 @@ watch(managingPhotos, (current, previous) => {
   </h1>
 
   <p class="hero-description">
-    软件工程学生，在学习与实践中探索更多可能。
+    电子科技大学在读本科生，在学习与实践中探索更多可能。
   </p>
 
   <div class="hero-actions">
@@ -253,20 +253,15 @@ watch(managingPhotos, (current, previous) => {
 </template>
 
 <style scoped>
+/* 页面与导航 */
 .portfolio {
   color: #203d35;
-  background:
-    radial-gradient(ellipse at 85% 12%, #e5e9da80, transparent 38%),
-    #f8f7f2;
+  background: radial-gradient(ellipse at 85% 12%, #e5e9da80, transparent 38%), #f8f7f2;
 }
-
-/* 顶部导航 */
 .site-header {
   border-bottom: 1px solid #203d3518;
 }
-
-.header-inner,
-.footer-inner {
+.header-inner, .footer-inner {
   max-width: 1200px;
   margin: 0 auto;
   padding: 18px 28px;
@@ -276,7 +271,6 @@ watch(managingPhotos, (current, previous) => {
   flex-wrap: wrap;
   gap: 20px;
 }
-
 .brand {
   display: flex;
   align-items: center;
@@ -284,36 +278,31 @@ watch(managingPhotos, (current, previous) => {
   font-size: 15px;
   font-weight: 600;
 }
-
 .brand-mark {
-  font-family: Georgia, serif;
-  font-size: 42px;
-  font-weight: 400;
+  font-family: inherit;
+  font-size: 26px;
+  font-weight: 600;
   line-height: 1;
+  letter-spacing: 1px;
+  white-space: nowrap;
 }
-
-.navigation,
-.management {
+.navigation, .management {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 24px;
 }
-
 .navigation a {
   color: #354b40;
   font-size: 14px;
   text-decoration: none;
 }
-
 .navigation a:hover {
   color: #b46642;
 }
-
 .management {
   gap: 8px;
 }
-
 .management button {
   padding: 8px 14px;
   color: #355547;
@@ -323,333 +312,20 @@ watch(managingPhotos, (current, previous) => {
   font-size: 12px;
   cursor: pointer;
 }
-
-/* 主体容器 */
 .page {
   max-width: 1200px;
   margin: 0 auto;
   padding: 36px 28px 64px;
 }
-
 /* 首屏 */
 .hero {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
   align-items: center;
-  gap: 56px;
-  padding: 26px 0 52px;
-}
-
-.eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  color: #66796c;
-  font-size: 10px;
-  letter-spacing: 3px;
-}
-
-.short-line {
-  width: 48px;
-  height: 1px;
-  background: #bdc6b9;
-}
-
-.hero h1 {
-  margin: 24px 0 20px;
-  font-family:
-    "Noto Serif SC", "Source Han Serif SC", "Songti SC",
-    "SimSun", serif;
-  font-size: clamp(32px, 4vw, 54px);
-  line-height: 1.45;
-  letter-spacing: -1px;
-}
-
-.hero h1 span {
-  color: #b46642;
-}
-
-.hero-description {
-  margin: 0;
-  color: #667366;
-  font-size: 15px;
-  line-height: 1.9;
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-top: 28px;
-}
-
-.hero-actions a {
-  padding: 11px 20px;
-  border-radius: 6px;
-  font-size: 13px;
-  text-decoration: none;
-}
-
-.primary-link {
-  border: 1px solid #204c3d;
-  background: #204c3d;
-  color: #fff;
-}
-
-.primary-link:hover {
-  background: #153b2e;
-}
-
-.outline-link {
-  border: 1px solid #a7b7a9;
-  color: #355547;
-  background: #ffffff50;
-}
-
-.outline-link:hover {
-  background: #e8eddf;
-}
-
-.hero-note {
-  margin: 30px 0 0;
-  color: #85907e;
-  font-size: 12px;
-}
-
-/* 相纸效果 */
-.hero-photo {
-  position: relative;
-  isolation: isolate;
-  min-width: 0;
-  margin: 0 8px;
-  padding: 12px 12px 0;
-  border: 1px solid #e6e5d9;
-  background: #fffdf6;
-  box-shadow: 0 12px 35px #273b2c18;
-  transform: rotate(3deg);
-}
-
-.hero-photo::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 18px -12px 8px;
-  background: #d9e2d0;
-  transform: rotate(-7deg);
-}
-
-.hero-photo img {
-  display: block;
-  width: 100%;
-  height: clamp(260px, 30vw, 370px);
-  object-fit: contain;
-  background: #e9ecdf;
-}
-
-.hero-photo figcaption {
-  padding: 15px 8px;
-  color: #6b7767;
-  text-align: right;
-  font-family: "KaiTi", "STKaiti", serif;
-  font-size: 17px;
-}
-
-/* 区块分隔 */
-.values-strip {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 24px;
-  padding: 22px 12px;
-  border-top: 1px solid #cfd8c9;
-  border-bottom: 1px solid #cfd8c9;
-  color: #73816d;
-  font-size: 12px;
-  letter-spacing: 1px;
-}
-
-.star {
-  color: #315444;
-}
-
-.chapter {
-  margin-top: 56px;
-  scroll-margin-top: 24px;
-}
-
-.chapter-heading {
-  margin-bottom: 24px;
-}
-
-.chapter-number {
-  color: #6c7b68;
-  font-size: 11px;
-  letter-spacing: 2px;
-}
-
-.chapter-heading h2 {
-  margin: 10px 0 14px;
-  font-family: "Songti SC", "SimSun", serif;
-  font-size: clamp(25px, 3vw, 34px);
-  line-height: 1.5;
-}
-
-.accent-line {
-  display: block;
-  width: 30px;
-  height: 3px;
-  background: #bc724b;
-}
-
-/* 页尾 */
-.site-footer {
-  color: #e9eddf;
-  background: #214b3f;
-}
-
-.footer-inner {
-  min-height: 110px;
-}
-
-.footer-inner p {
-  margin: 0;
-  color: #bbcab7;
-  font-size: 12px;
-  letter-spacing: 3px;
-}
-
-.footer-note {
-  color: #c8d3bf;
-  font-family: "KaiTi", "STKaiti", serif;
-  font-size: 15px;
-}
-
-a:focus-visible,
-button:focus-visible {
-  outline: 3px solid #b8794f;
-  outline-offset: 4px;
-}
-
-/* 手机适配 */
-@media (max-width: 760px) {
-  .header-inner,
-  .footer-inner {
-    padding: 18px 20px;
-  }
-
-  .navigation {
-    order: 3;
-    width: 100%;
-  }
-
-  .page {
-    padding: 24px 20px 40px;
-  }
-
-  .hero {
-    grid-template-columns: 1fr;
-    gap: 32px;
-    padding: 12px 0 40px;
-  }
-
-  .hero-photo {
-    margin: 0;
-    transform: none;
-  }
-
-  .hero-photo::before {
-    display: none;
-  }
-
-  .hero-photo img {
-    height: 280px;
-  }
-
-  .values-strip {
-    gap: 12px;
-    font-size: 11px;
-    letter-spacing: 0;
-  }
-
-  .chapter {
-    margin-top: 36px;
-  }
-}
-/* 简化首屏，覆盖上一版的排版 */
-.hero {
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  gap: 36px;
-  align-items: center;
-  padding: 12px 0 32px;
+  gap: 40px;
+  padding: 20px 0 36px;
   scroll-margin-top: 20px;
 }
-
-.hello-tag {
-  display: inline-block;
-  padding: 6px 12px;
-  color: #446550;
-  background: #e7eddf;
-  border-radius: 8px;
-  font-size: 15px;
-}
-
-.hero h1 {
-  margin: 20px 0;
-  font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
-  font-size: clamp(32px, 3.6vw, 48px);
-  line-height: 1.4;
-  letter-spacing: -1px;
-}
-
-.hero h1 span {
-  color: #28664f;
-}
-
-.hero-description {
-  margin-bottom: 28px;
-  font-size: 17px;
-  line-height: 1.8;
-}
-
-.hero-copy > .primary-link {
-  display: inline-block;
-  padding: 12px 22px;
-  border-radius: 10px;
-  text-decoration: none;
-}
-
-.chapter {
-  margin-top: 28px;
-}
-
-@media (max-width: 760px) {
-  .hero {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
-  .hero-copy {
-    padding: 8px 0;
-  }
-}
-
-.brand-mark {
-  font-family: inherit;
-  font-size: 26px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  white-space: nowrap;
-}
-
-/* 首屏新版排版 */
-.hero {
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-  gap: 40px;
-  align-items: center;
-  padding: 20px 0 36px;
-}
-
 .hero h1 {
   margin: 0 0 24px;
   font-family: inherit;
@@ -658,18 +334,15 @@ button:focus-visible {
   line-height: 1.2;
   letter-spacing: -2px;
 }
-
 .hero h1 span {
   color: #173e30;
 }
-
 .name-highlight {
   position: relative;
   display: inline-block;
 }
-
 .name-highlight::after {
-  content: "";
+  content: '';
   position: absolute;
   left: 8%;
   right: 0;
@@ -679,7 +352,6 @@ button:focus-visible {
   background: #ef995e;
   transform: rotate(-4deg);
 }
-
 .hero-description {
   max-width: 440px;
   margin: 28px 0;
@@ -687,7 +359,6 @@ button:focus-visible {
   font-size: 19px;
   line-height: 1.8;
 }
-
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
@@ -695,7 +366,6 @@ button:focus-visible {
   gap: 14px;
   margin: 0;
 }
-
 .hero-actions a {
   display: inline-block;
   padding: 12px 22px;
@@ -703,40 +373,43 @@ button:focus-visible {
   font-size: 15px;
   text-decoration: none;
 }
-
 .hero-actions .primary-link {
   color: #fff;
   background: #254e32;
   border: 1px solid #254e32;
 }
-
 .hero-actions .primary-link:hover {
   background: #193b25;
 }
-
 .chat-link {
   color: #254e32;
   background: transparent;
   border: 1px solid #254e32;
 }
-
 .chat-link:hover {
   background: #e9efdf;
 }
-
-@media (max-width: 760px) {
-  .hero {
-    grid-template-columns: 1fr;
-    gap: 28px;
-    padding-top: 8px;
-  }
-
-  .hero-description {
-    font-size: 17px;
-  }
+/* 内容章节 */
+.chapter {
+  margin-top: 28px;
+  scroll-margin-top: 24px;
 }
-
-/* ===== 生活照片墙 ===== */
+.chapter-heading {
+  margin-bottom: 24px;
+}
+.chapter-heading h2 {
+  margin: 10px 0 14px;
+  font-family: 'Songti SC', 'SimSun', serif;
+  font-size: clamp(25px, 3vw, 34px);
+  line-height: 1.5;
+}
+.accent-line {
+  display: block;
+  width: 30px;
+  height: 3px;
+  background: #bc724b;
+}
+/* 生活照片墙 */
 .life-heading {
   display: flex;
   justify-content: space-between;
@@ -745,14 +418,12 @@ button:focus-visible {
   gap: 16px;
   margin-bottom: 22px;
 }
-
 .life-heading h2 {
   margin: 0 0 10px;
   font-family: inherit;
   font-size: 30px;
   line-height: 1.4;
 }
-
 .life-accent {
   display: block;
   width: 92px;
@@ -761,23 +432,19 @@ button:focus-visible {
   background: #eea16c;
   transform: rotate(-3deg);
 }
-
 .life-heading a {
   color: #42634e;
   font-size: 14px;
   text-decoration: none;
 }
-
 .life-heading a:hover {
   text-decoration: underline;
 }
-
 .life-gallery {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
-
 .life-photo {
   min-width: 0;
   margin: 0;
@@ -786,7 +453,6 @@ button:focus-visible {
   border-radius: 16px;
   background: #fffdf8;
 }
-
 .life-image {
   display: grid;
   place-items: center;
@@ -794,7 +460,6 @@ button:focus-visible {
   padding: 8px;
   background: #e9eee2;
 }
-
 .life-image img {
   display: block;
   width: 100%;
@@ -803,7 +468,6 @@ button:focus-visible {
   object-fit: contain;
   border-radius: 8px;
 }
-
 .life-photo figcaption {
   padding: 14px 16px;
   color: #294c3b;
@@ -812,8 +476,7 @@ button:focus-visible {
   line-height: 1.6;
   overflow-wrap: anywhere;
 }
-
-/* ===== 助手与留言双栏 ===== */
+/* 互动双栏与子组件主题 */
 .interaction-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -821,62 +484,70 @@ button:focus-visible {
   gap: 22px;
   margin-top: 44px;
 }
-
 .interaction-panel {
   min-width: 0;
   scroll-margin-top: 24px;
 }
-
 #assistant :deep(.assistant) {
   background: linear-gradient(145deg, #f0f5e8, #e0edcf);
   border: 1px solid #dbe6cf;
   border-radius: 22px;
 }
-
 #messages :deep(.message-board) {
   background: linear-gradient(145deg, #fff4e7, #ffe6cb);
   border: 1px solid #f0ddc4;
   border-radius: 22px;
 }
-
-#assistant :deep(textarea),
-#messages :deep(textarea) {
+#assistant :deep(textarea), #messages :deep(textarea) {
   background: #ffffffd9;
   border-color: #ffffff;
 }
-
 #assistant :deep(.response) {
   background: #ffffffa6;
   border: 1px solid #ffffff80;
 }
-
 #messages :deep(.message-item) {
   background: #ffffffa6;
   border-color: #ffffff90;
 }
-
-#assistant :deep(.form-bottom),
-#messages :deep(.form-bottom) {
+#assistant :deep(.form-bottom), #messages :deep(.form-bottom) {
   align-items: flex-start;
 }
-
-#assistant :deep(.form-bottom span),
-#messages :deep(.form-bottom span) {
+#assistant :deep(.form-bottom span), #messages :deep(.form-bottom span) {
   flex: 1 1 180px;
 }
-
-#assistant :deep(button),
-#messages :deep(button) {
+#assistant :deep(button), #messages :deep(button) {
   flex-shrink: 0;
 }
-
-/* ===== 手机和平板 ===== */
+/* 页尾与键盘焦点 */
+.site-footer {
+  color: #e9eddf;
+  background: #214b3f;
+}
+.footer-inner {
+  min-height: 110px;
+}
+.footer-inner p {
+  margin: 0;
+  color: #bbcab7;
+  font-size: 12px;
+  letter-spacing: 3px;
+}
+.footer-note {
+  color: #c8d3bf;
+  font-family: 'KaiTi', 'STKaiti', serif;
+  font-size: 15px;
+}
+a:focus-visible, button:focus-visible {
+  outline: 3px solid #b8794f;
+  outline-offset: 4px;
+}
+/* 平板与手机 */
 @media (max-width: 900px) {
   .life-gallery {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-
 @media (max-width: 850px) {
   .interaction-grid {
     grid-template-columns: 1fr;
@@ -884,16 +555,36 @@ button:focus-visible {
     margin-top: 32px;
   }
 }
-
+@media (max-width: 760px) {
+  .header-inner, .footer-inner {
+    padding: 18px 20px;
+  }
+  .navigation {
+    order: 3;
+    width: 100%;
+  }
+  .page {
+    padding: 24px 20px 40px;
+  }
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-top: 8px;
+  }
+  .hero-copy {
+    padding: 8px 0;
+  }
+  .hero-description {
+    font-size: 17px;
+  }
+}
 @media (max-width: 500px) {
   .life-gallery {
     grid-template-columns: 1fr;
   }
-
   .life-image {
     height: 250px;
   }
-
   .life-heading h2 {
     font-size: 26px;
   }
