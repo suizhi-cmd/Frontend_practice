@@ -9,11 +9,18 @@
   "sections": [
     {
       "title": "个人优势",
-      "content": "组织协调能力，语言表达能力"
+      "content": "组织协调能力，语言表达能力",
+      "type": "intro"
     },
     {
       "title": "获奖经历",
-      "content": ""
+      "content": "",
+      "type": "intro"
+    },
+    {
+      "title": "个人网贷AI风控系统",
+      "content": "项目背景：大学本科综设\n正在进行中...\n已完成：可信性分析报告，技术栈分析报告，泳道图分析报告",
+      "type": "project"
     }
   ]
 }

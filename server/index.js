@@ -5,6 +5,7 @@ const fs = require("node:fs/promises");
 const multer = require("multer");
 const sharp = require("sharp");
 const { randomUUID } = require("node:crypto");
+const { rateLimit } = require("express-rate-limit");
 
 // 从本文件所在目录读取密钥配置
 dotenv.config({ path: path.join(__dirname, ".env") });
@@ -467,8 +468,19 @@ app.post("/api/photos/upload", (req, res) => {
     });
 });
 
+// 同一 IP 每 10 分钟最多请求 20 次
+const chatLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000,
+    limit: 20,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    message: {
+        error: "提问太频繁了，请稍后再试。每 10 分钟最多请求 20 次。"
+    }
+});
+
 // 接收网页的问题，再由后端调用 DeepSeek
-app.post("/api/chat", async (req, res) => {
+app.post("/api/chat", chatLimiter, async (req, res) =>  {
     const message = req.body?.message;
 
     // 检查输入，避免发送空消息或过长的内容
