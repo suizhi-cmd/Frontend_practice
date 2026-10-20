@@ -84,12 +84,18 @@ watch(managingPhotos, (current, previous) => {
     loadLifePhotos()
   }
 })
-
 </script>
 
 <template>
-  <div class="portfolio">
+  <div id="page-top" class="portfolio">
     <header class="site-header">
+      <img
+  class="header-banner"
+  src="/illustrations/header-campus.png"
+  alt=""
+  aria-hidden="true"
+  fetchpriority="high"
+>
       <div class="header-inner">
         <div class="brand">
           <span class="brand-mark">绥之</span>
@@ -102,29 +108,46 @@ watch(managingPhotos, (current, previous) => {
           aria-label="主页导航"
         >
           <a href="#about">关于我</a>
+          <a href="#projects">项目经历</a>
           <a href="#life">生活相册</a>
           <a href="#assistant">问问助手</a>
           <a href="#messages">留言板</a>
-          <a href="#projects">项目经历</a>
         </nav>
 
         <div class="management">
-          <button
-            v-if="!managingPhotos"
-            type="button"
-            @click="toggleEditing"
-          >
-            {{ editing ? '返回主页' : '编辑资料' }}
-          </button>
+  <details
+    v-if="!editing && !managingPhotos"
+    class="management-menu"
+  >
+    <summary>内容管理 ▾</summary>
 
-          <button
-            v-if="!editing"
-            type="button"
-            @click="togglePhotos"
-          >
-            {{ managingPhotos ? '返回主页' : '管理照片' }}
-          </button>
-        </div>
+    <div class="management-options">
+      <button type="button" @click="toggleEditing">
+        编辑个人资料
+      </button>
+
+      <button type="button" @click="togglePhotos">
+        管理照片
+      </button>
+    </div>
+  </details>
+
+  <button
+    v-else-if="editing"
+    type="button"
+    @click="toggleEditing"
+  >
+    返回主页
+  </button>
+
+  <button
+    v-else
+    type="button"
+    @click="togglePhotos"
+  >
+    返回主页
+  </button>
+</div>
       </div>
     </header>
 
@@ -240,26 +263,66 @@ watch(managingPhotos, (current, previous) => {
     </main>
 
     <footer class="site-footer">
-      <div class="footer-inner">
-        <div class="brand footer-brand">
-          <span class="brand-mark">绥之</span>
-          <span>我的个人空间</span>
-        </div>
-        <p>持续更新中</p>
-        <span class="footer-note">保持热爱，奔赴下一场山海。</span>
+  <img
+    class="footer-landscape"
+    src="/illustrations/footer-landscape.png"
+    alt=""
+    aria-hidden="true"
+  >
+
+  <div class="footer-base">
+    <div class="footer-inner">
+      <div class="footer-identity">
+        <span class="brand-mark">绥之</span>
+        <p>电子科技大学在读本科生</p>
       </div>
-    </footer>
+
+      <div class="footer-message">
+        <p>保持好奇，持续更新。</p>
+        <span>学习、项目，以及生活里的小小收获。</span>
+      </div>
+
+      <a class="back-to-top" href="#page-top">
+        返回顶部 ↑
+      </a>
+    </div>
+  </div>
+</footer>
   </div>
 </template>
 
 <style scoped>
 /* 页面与导航 */
 .portfolio {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
   color: #203d35;
-  background: radial-gradient(ellipse at 85% 12%, #e5e9da80, transparent 38%), #f8f7f2;
+  background: #f8f7f2;
+}
+
+.portfolio::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: url("/illustrations/page-background.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  opacity: 0.5;
+  pointer-events: none;
 }
 .site-header {
-  border-bottom: 1px solid #203d3518;
+  background: #f8f7f2;
+  border-bottom: 2px solid #315747;
+}
+.header-banner {
+  display: block;
+  width: 100%;
+  height: clamp(150px, 17vw, 250px);
+  object-fit: cover;
+  object-position: center 58%;
 }
 .header-inner, .footer-inner {
   max-width: 1200px;
@@ -302,6 +365,65 @@ watch(managingPhotos, (current, previous) => {
 }
 .management {
   gap: 8px;
+}
+.management-menu {
+  position: relative;
+  z-index: 10;
+}
+
+.management-menu > summary {
+  padding: 9px 14px;
+  border: 1px solid #b7c8b0;
+  border-radius: 10px;
+  background: #fff;
+  color: #355547;
+  font-size: 14px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.management-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.management-menu > summary:hover,
+.management-menu[open] > summary {
+  background: #edf3e7;
+}
+
+.management-menu > summary:focus-visible {
+  outline: 3px solid #91b897;
+  outline-offset: 3px;
+}
+
+.management-options {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  display: grid;
+  gap: 5px;
+  width: 180px;
+  padding: 8px;
+  border: 1px solid #dfe6dc;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 12px 30px #203d3514;
+}
+
+.management-options button {
+  width: 100%;
+  padding: 11px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #355547;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.management-options button:hover {
+  background: #edf3e7;
 }
 .management button {
   padding: 8px 14px;
@@ -530,23 +652,70 @@ watch(managingPhotos, (current, previous) => {
   flex-shrink: 0;
 }
 /* 页尾与键盘焦点 */
+/* 页尾 */
 .site-footer {
-  color: #e9eddf;
+  margin-top: 32px;
+  background: transparent;
+  color: #f1f5e9;
+}
+
+/* 山丘装饰不占用文字区域 */
+.footer-landscape {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: -1px;
+  pointer-events: none;
+}
+
+.footer-inner {
+  position: relative;
+  min-height: 160px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  gap: 24px;
+}
+
+.footer-identity .brand-mark {
+  display: block;
+  font-size: 28px;
+}
+
+.footer-identity p {
+  margin: 10px 0 0;
+  color: #c5d4bd;
+  font-size: 14px;
+}
+
+.footer-message p {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.footer-message span {
+  color: #c5d4bd;
+  font-size: 14px;
+}
+
+.footer-base {
   background: #214b3f;
 }
-.footer-inner {
-  min-height: 110px;
+
+.back-to-top {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 16px;
+  border: 1px solid #b8c9b570;
+  border-radius: 24px;
+  background: #ffffff0a;
+  color: #f1f5e9;
+  font-size: 14px;
+  text-decoration: none;
 }
-.footer-inner p {
-  margin: 0;
-  color: #bbcab7;
-  font-size: 12px;
-  letter-spacing: 3px;
-}
-.footer-note {
-  color: #c8d3bf;
-  font-family: 'KaiTi', 'STKaiti', serif;
-  font-size: 15px;
+
+.back-to-top:hover {
+  background: #ffffff18;
 }
 a:focus-visible, button:focus-visible {
   outline: 3px solid #b8794f;
@@ -572,6 +741,15 @@ a:focus-visible, button:focus-visible {
   .header-inner, .footer-inner {
     padding: 18px 20px;
   }
+  .header-banner {
+  height: 140px;
+  object-position: 60% center;
+}
+
+.portfolio::before {
+  background-position: center;
+  opacity: 0.4;
+}
   .navigation {
     order: 3;
     width: 100%;
@@ -590,6 +768,19 @@ a:focus-visible, button:focus-visible {
   .hero-description {
     font-size: 17px;
   }
+  .footer-inner {
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.footer-message {
+  width: 100%;
+  order: 3;
+}
+
+.footer-message span {
+  display: block;
+}
 }
 @media (max-width: 500px) {
   .life-gallery {
