@@ -90,10 +90,17 @@ function formatTime(time: string) {
 
 <template>
   <section class="message-board" aria-labelledby="message-board-title">
-    <header>
-      <h2 id="message-board-title">留下一点想法</h2>
-      <p>关于页面、项目，或者一句简单的问候。</p>
-    </header>
+    <header class="message-heading">
+  <h2 id="message-board-title">留下一点想法</h2>
+  <p>关于页面、项目，或者一句简单的问候。</p>
+
+  <img
+    class="message-illustration"
+    src="/illustrations/message.png"
+    alt=""
+    aria-hidden="true"
+  >
+</header>
 
     <form @submit.prevent="publishMessage">
       <label for="message-draft">你的留言</label>
@@ -258,6 +265,35 @@ button:focus-visible {
 @media (max-width: 600px) {
   .message-board {
     padding: 22px;
+  }
+}
+
+.message-heading {
+  position: relative;
+  min-height: 120px;
+  padding-right: 130px;
+}
+
+.message-illustration {
+  position: absolute;
+  right: -8px;
+  top: -14px;
+  width: 135px;
+  height: 135px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+@media (max-width: 600px) {
+  .message-heading {
+    padding-right: 90px;
+    min-height: 105px;
+  }
+
+  .message-illustration {
+    width: 95px;
+    height: 105px;
+    top: 0;
   }
 }
 </style>

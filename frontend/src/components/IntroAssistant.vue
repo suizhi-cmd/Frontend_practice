@@ -84,6 +84,13 @@ onUnmounted(() => {
         <h3>个人介绍助手</h3>
         <p>关于我的学习、兴趣和项目，都可以问问。</p>
       </div>
+
+      <img
+  class="assistant-illustration"
+  src="/illustrations/assistant.png"
+  alt=""
+  aria-hidden="true"
+>
     </header>
 
     <form @submit.prevent="sendQuestion">
@@ -239,6 +246,39 @@ button:focus-visible {
 @media (max-width: 600px) {
   .assistant {
     padding: 20px;
+  }
+}
+
+.assistant-heading {
+  position: relative;
+  min-height: 120px;
+  padding-right: 130px;
+}
+
+.assistant-heading > div {
+  min-width: 0;
+}
+
+.assistant-illustration {
+  position: absolute;
+  right: -8px;
+  top: -14px;
+  width: 135px;
+  height: 135px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+@media (max-width: 600px) {
+  .assistant-heading {
+    padding-right: 90px;
+    min-height: 105px;
+  }
+
+  .assistant-illustration {
+    width: 95px;
+    height: 105px;
+    top: 0;
   }
 }
 </style>

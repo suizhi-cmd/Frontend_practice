@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import ProfileCard from './components/ProfileCard.vue'
 import PhotoCarousel from './components/PhotoCarousel.vue'
 import ProfileEditor from './components/ProfileEditor.vue'
@@ -33,6 +33,58 @@ const profileVersion = ref(0)
 function handleSaved() {
   profileVersion.value += 1
 }
+
+interface LifePhoto {
+  src: string
+  title: string
+}
+
+const lifePhotos = ref<LifePhoto[]>([])
+const lifeLoading = ref(true)
+const lifeError = ref('')
+
+async function loadLifePhotos() {
+  lifeLoading.value = true
+  lifeError.value = ''
+
+  try {
+    const response = await fetch('/api/photos', {
+      cache: 'no-store',
+    })
+
+    if (!response.ok) throw new Error('读取照片失败')
+
+    const data: unknown = await response.json()
+
+    if (
+      !Array.isArray(data) ||
+      !data.every((photo) =>
+        photo !== null &&
+        typeof photo === 'object' &&
+        typeof photo.src === 'string' &&
+        typeof photo.title === 'string'
+      )
+    ) {
+      throw new Error('照片格式不正确')
+    }
+
+    lifePhotos.value = data.slice(0, 4)
+  } catch {
+    lifeError.value = '暂时无法加载照片，请稍后刷新。'
+  } finally {
+    lifeLoading.value = false
+  }
+}
+
+onMounted(loadLifePhotos)
+
+// 退出照片管理后，更新照片墙
+watch(managingPhotos, (current, previous) => {
+  if (previous && !current) {
+    loadLifePhotos()
+  }
+})
+
 </script>
 
 <template>
@@ -50,7 +102,7 @@ function handleSaved() {
           aria-label="主页导航"
         >
           <a href="#about">关于我</a>
-          <a href="#top">生活相册</a>
+          <a href="#life">生活相册</a>
           <a href="#assistant">问问助手</a>
           <a href="#messages">留言板</a>
           <a href="#projects">项目经历</a>
@@ -89,19 +141,25 @@ function handleSaved() {
         <!-- 首屏 -->
        <section id="top" class="hero" aria-labelledby="hero-title">
   <div class="hero-copy">
-    <span class="hello-tag">你好，很高兴认识你</span>
+  <h1 id="hero-title">
+    你好，<br>
+    我是<span class="name-highlight">绥之。</span>
+  </h1>
 
-    <h1 id="hero-title">
-      欢迎来到<br>
-      <span>我的个人空间。</span>
-    </h1>
+  <p class="hero-description">
+    软件工程学生，在学习与实践中探索更多可能。
+  </p>
 
-    <p class="hero-description">
-      在这里，了解我的学习、项目和生活。
-    </p>
+  <div class="hero-actions">
+    <a class="primary-link" href="#projects">
+      查看我的项目 →
+    </a>
 
-    <a class="primary-link" href="#about">了解更多 →</a>
+    <a class="chat-link" href="#assistant">
+      和助手聊聊
+    </a>
   </div>
+</div>
 
   <PhotoCarousel />
 </section>
@@ -129,14 +187,55 @@ function handleSaved() {
   <ProjectShowcase :key="profileVersion" />
 </section>
 
-<!-- AI 助手 -->
-<section id="assistant" class="chapter">
-  <IntroAssistant />
+<section
+  id="life"
+  class="chapter life-section"
+  aria-labelledby="life-title"
+>
+  <header class="life-heading">
+    <div>
+      <h2 id="life-title">生活不止代码</h2>
+      <span class="life-accent"></span>
+    </div>
+
+    <a href="#top">回到轮播，查看更多 →</a>
+  </header>
+
+  <p v-if="lifeLoading" role="status">正在加载照片…</p>
+  <p v-else-if="lifeError" role="alert">{{ lifeError }}</p>
+  <p v-else-if="lifePhotos.length === 0">
+    等待记录新的生活瞬间。
+  </p>
+
+  <div v-else class="life-gallery">
+    <figure
+      v-for="photo in lifePhotos"
+      :key="photo.src"
+      class="life-photo"
+    >
+      <div class="life-image">
+        <img
+          :src="photo.src"
+          :alt="photo.title"
+          loading="lazy"
+        >
+      </div>
+
+      <figcaption>{{ photo.title }}</figcaption>
+    </figure>
+  </div>
 </section>
 
-<section id="messages" class="chapter">
-  <MessageBoard />
-</section>
+<!-- AI 助手 -->
+<div class="interaction-grid">
+  <section id="assistant" class="interaction-panel">
+    <IntroAssistant />
+  </section>
+
+  <section id="messages" class="interaction-panel">
+    <MessageBoard />
+  </section>
+</div>
       </template>
     </main>
 
@@ -542,4 +641,262 @@ button:focus-visible {
   letter-spacing: 1px;
   white-space: nowrap;
 }
+
+/* 首屏新版排版 */
+.hero {
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 40px;
+  align-items: center;
+  padding: 20px 0 36px;
+}
+
+.hero h1 {
+  margin: 0 0 24px;
+  font-family: inherit;
+  font-size: clamp(42px, 5.6vw, 72px);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -2px;
+}
+
+.hero h1 span {
+  color: #173e30;
+}
+
+.name-highlight {
+  position: relative;
+  display: inline-block;
+}
+
+.name-highlight::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 0;
+  bottom: -8px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ef995e;
+  transform: rotate(-4deg);
+}
+
+.hero-description {
+  max-width: 440px;
+  margin: 28px 0;
+  color: #365745;
+  font-size: 19px;
+  line-height: 1.8;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin: 0;
+}
+
+.hero-actions a {
+  display: inline-block;
+  padding: 12px 22px;
+  border-radius: 28px;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.hero-actions .primary-link {
+  color: #fff;
+  background: #254e32;
+  border: 1px solid #254e32;
+}
+
+.hero-actions .primary-link:hover {
+  background: #193b25;
+}
+
+.chat-link {
+  color: #254e32;
+  background: transparent;
+  border: 1px solid #254e32;
+}
+
+.chat-link:hover {
+  background: #e9efdf;
+}
+
+@media (max-width: 760px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-top: 8px;
+  }
+
+  .hero-description {
+    font-size: 17px;
+  }
+}
+
+/* ===== 生活照片墙 ===== */
+.life-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.life-heading h2 {
+  margin: 0 0 10px;
+  font-family: inherit;
+  font-size: 30px;
+  line-height: 1.4;
+}
+
+.life-accent {
+  display: block;
+  width: 92px;
+  height: 4px;
+  border-radius: 50%;
+  background: #eea16c;
+  transform: rotate(-3deg);
+}
+
+.life-heading a {
+  color: #42634e;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.life-heading a:hover {
+  text-decoration: underline;
+}
+
+.life-gallery {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.life-photo {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid #dfe6dc;
+  border-radius: 16px;
+  background: #fffdf8;
+}
+
+.life-image {
+  display: grid;
+  place-items: center;
+  height: 220px;
+  padding: 8px;
+  background: #e9eee2;
+}
+
+.life-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.life-photo figcaption {
+  padding: 14px 16px;
+  color: #294c3b;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* ===== 助手与留言双栏 ===== */
+.interaction-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 22px;
+  margin-top: 44px;
+}
+
+.interaction-panel {
+  min-width: 0;
+  scroll-margin-top: 24px;
+}
+
+#assistant :deep(.assistant) {
+  background: linear-gradient(145deg, #f0f5e8, #e0edcf);
+  border: 1px solid #dbe6cf;
+  border-radius: 22px;
+}
+
+#messages :deep(.message-board) {
+  background: linear-gradient(145deg, #fff4e7, #ffe6cb);
+  border: 1px solid #f0ddc4;
+  border-radius: 22px;
+}
+
+#assistant :deep(textarea),
+#messages :deep(textarea) {
+  background: #ffffffd9;
+  border-color: #ffffff;
+}
+
+#assistant :deep(.response) {
+  background: #ffffffa6;
+  border: 1px solid #ffffff80;
+}
+
+#messages :deep(.message-item) {
+  background: #ffffffa6;
+  border-color: #ffffff90;
+}
+
+#assistant :deep(.form-bottom),
+#messages :deep(.form-bottom) {
+  align-items: flex-start;
+}
+
+#assistant :deep(.form-bottom span),
+#messages :deep(.form-bottom span) {
+  flex: 1 1 180px;
+}
+
+#assistant :deep(button),
+#messages :deep(button) {
+  flex-shrink: 0;
+}
+
+/* ===== 手机和平板 ===== */
+@media (max-width: 900px) {
+  .life-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 850px) {
+  .interaction-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-top: 32px;
+  }
+}
+
+@media (max-width: 500px) {
+  .life-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .life-image {
+    height: 250px;
+  }
+
+  .life-heading h2 {
+    font-size: 26px;
+  }
+}
+
 </style>
