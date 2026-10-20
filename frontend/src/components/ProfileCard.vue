@@ -262,10 +262,10 @@ li {
 /* 展开资料 */
 .more-details {
   margin-top: 20px;
-  padding: 18px 22px;
+  padding: 16px 20px;
   border: 1px solid #dfe6dc;
   border-radius: 14px;
-  background: #fffdf8;
+  background: #fff;
 }
 summary {
   color: #345b46;
@@ -303,13 +303,21 @@ dd {
 .intro-section {
   min-width: 0;
   margin-top: 20px;
-  padding: 24px;
+  padding: 20px 22px;
   border: 1px solid #dfe6dc;
   border-radius: 16px;
-  background: #fffdf8;
+  background: #fff;
+}
+
+.intro-section h3 {
+  color: #36543d;
+  font-size: 18px;
+  line-height: 1.5;
 }
 .intro-section p {
-  margin: 12px 0 0;
+  margin: 10px 0 0;
+  color: #64715f;
+  font-size: 15px;
   line-height: 1.9;
   white-space: pre-wrap;
   overflow-wrap: anywhere;

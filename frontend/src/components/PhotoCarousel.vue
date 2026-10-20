@@ -125,11 +125,11 @@ onUnmounted(() => {
 /* 轮播卡片与主图 */
 .carousel {
   min-width: 0;
-  padding: 18px;
+  padding: 16px;
   background: #fff;
   border: 1px solid #dfe6dc;
-  border-radius: 20px;
-  box-shadow: 0 12px 32px #203d3508;
+  border-radius: 24px;
+  box-shadow: 0 12px 28px #26452c0b;
 }
 h2 {
   margin: 0 0 14px;
@@ -148,8 +148,10 @@ img {
 }
 figcaption {
   padding: 12px 0;
+  color: #294b36;
   text-align: center;
   font-size: 16px;
+  font-weight: 600;
   overflow-wrap: anywhere;
 }
 /* 前后切换与播放控制 */
@@ -161,12 +163,12 @@ figcaption {
   gap: 8px;
 }
 button {
-  padding: 8px 12px;
-  border: 1px solid #dfe6dc;
-  border-radius: 10px;
-  background: #eef4e9;
-  color: #203d35;
-  font-size: 14px;
+  padding: 7px 12px;
+  border: 1px solid #bcccaf;
+  border-radius: 20px;
+  background: #ffffff70;
+  color: #42623b;
+  font-size: 13px;
   cursor: pointer;
 }
 button:hover {

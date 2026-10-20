@@ -443,35 +443,45 @@ watch(managingPhotos, (current, previous) => {
 .life-gallery {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
+  align-items: stretch;
+  gap: 18px;
 }
 .life-photo {
   min-width: 0;
   margin: 0;
   overflow: hidden;
   border: 1px solid #dfe6dc;
-  border-radius: 16px;
-  background: #fffdf8;
+  border-radius: 18px;
+  background: #fff;
+  height: 100%;
 }
+
 .life-image {
-  display: grid;
-  place-items: center;
-  height: 220px;
-  padding: 8px;
-  background: #e9eee2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 240px;
+  padding: 12px;
+  overflow: hidden;
+  background: #fff;
 }
 .life-image img {
   display: block;
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 216px;
+  min-width: 0;
   min-height: 0;
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: 16px;
 }
 .life-photo figcaption {
-  padding: 14px 16px;
-  color: #294c3b;
-  font-size: 16px;
+  min-height: 78px;
+  margin: 0;
+  padding: 12px 16px 18px;
+  color: #35503c;
+  font-size: 15px;
   font-weight: 600;
   line-height: 1.6;
   overflow-wrap: anywhere;
@@ -545,8 +555,11 @@ a:focus-visible, button:focus-visible {
 /* 平板与手机 */
 @media (max-width: 900px) {
   .life-gallery {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+  gap: 18px;
+}
 }
 @media (max-width: 850px) {
   .interaction-grid {
@@ -581,9 +594,6 @@ a:focus-visible, button:focus-visible {
 @media (max-width: 500px) {
   .life-gallery {
     grid-template-columns: 1fr;
-  }
-  .life-image {
-    height: 250px;
   }
   .life-heading h2 {
     font-size: 26px;
