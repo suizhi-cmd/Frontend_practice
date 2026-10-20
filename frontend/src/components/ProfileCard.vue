@@ -52,73 +52,269 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+// 将逗号、顿号或换行分隔的内容转为列表
+function splitItems(text: string) {
+  return text
+    .split(/[，,、；;\n]+/)
+    .map(item => item.trim())
+    .filter(Boolean)
+}
 </script>
 
 <template>
-  <section class="profile-card">
-    <span class="eyebrow">MY LITTLE CORNER / 个人空间</span>
-    <h1>你好，欢迎来到我的个人空间</h1>
-    <p class="subtitle">记录学习，也记录生活。</p>
-
+  <div class="profile-content">
     <p v-if="loading" role="status">正在加载个人资料…</p>
     <p v-else-if="error" class="error" role="alert">{{ error }}</p>
 
-    <dl v-else-if="profile" class="profile-details">
-      <div v-for="field in fields" :key="field.key">
-        <dt>{{ field.label }}</dt>
-        <dd>{{ profile[field.key] || '暂未填写' }}</dd>
+    <template v-else-if="profile">
+      <div class="overview-grid">
+        <article class="info-card education">
+          <header class="card-heading">
+            <span class="card-icon" aria-hidden="true">⌂</span>
+            <h3>教育背景</h3>
+          </header>
+
+          <strong>{{ profile.school || '暂未填写学校' }}</strong>
+          <p>{{ profile.college }}</p>
+          <p>{{ profile.major }}</p>
+
+          <img
+  class="card-art"
+  src="/illustrations/education.png"
+  alt=""
+  aria-hidden="true"
+>
+        </article>
+
+        <article class="info-card exploration">
+          <header class="card-heading">
+            <span class="card-icon code-icon" aria-hidden="true">&lt;/&gt;</span>
+            <h3>最近在探索</h3>
+          </header>
+
+          <ul v-if="splitItems(profile.learning).length">
+            <li
+              v-for="(item, index) in splitItems(profile.learning).slice(0, 3)"
+              :key="index"
+            >
+              {{ item }}
+            </li>
+          </ul>
+          <p v-else>持续探索中。</p>
+
+          <img
+  class="card-art"
+  src="/illustrations/exploration.png"
+  alt=""
+  aria-hidden="true"
+>
+        </article>
+
+        <article class="info-card interests">
+          <header class="card-heading">
+            <span class="card-icon" aria-hidden="true">♡</span>
+            <h3>生活关键词</h3>
+          </header>
+
+          <div v-if="profile.interests.trim()" class="interest-list">
+            <span
+              v-for="(item, index) in splitItems(profile.interests).slice(0, 4)"
+              :key="index"
+            >
+              {{ item }}
+            </span>
+          </div>
+          <p v-else>等待记录更多生活。</p>
+
+          <img
+  class="card-art"
+  src="/illustrations/interests.png"
+  alt=""
+  aria-hidden="true"
+>
+        </article>
       </div>
-    </dl>
-    <div v-if="profile && !loading && !error" class="intro-sections">
-  <article
-    v-for="(section, index) in profile.sections.filter(
-  item => item.type !== 'project'
-)"
-    :key="index"
-    class="intro-section"
-  >
-    <h2>{{ section.title }}</h2>
-    <p>{{ section.content }}</p>
-  </article>
-</div>
-  </section>
+
+      <!-- 完整资料仍可查看，首页不重复铺开 -->
+      <details class="more-details">
+        <summary>更多关于我</summary>
+
+        <dl class="profile-details">
+          <div v-for="field in fields" :key="field.key">
+            <dt>{{ field.label }}</dt>
+            <dd>{{ profile[field.key] || '暂未填写' }}</dd>
+          </div>
+        </dl>
+      </details>
+
+      <!-- 保留普通介绍区块，项目经历由项目组件展示 -->
+      <div class="intro-sections">
+        <article
+          v-for="(section, index) in profile.sections.filter(
+            item => item.type !== 'project'
+          )"
+          :key="index"
+          class="intro-section"
+        >
+          <h3>{{ section.title }}</h3>
+          <p>{{ section.content || '内容整理中。' }}</p>
+        </article>
+      </div>
+    </template>
+  </div>
 </template>
 
 <style scoped>
-.profile-card {
-  padding: 36px;
-  border: 1px solid #dfe6dc;
-  border-radius: 24px;
-  background: linear-gradient(120deg, #e4eddd, #f8faf3);
-  box-shadow: 0 12px 40px #203d3508;
+.overview-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr;
+  gap: 18px;
 }
 
-.eyebrow {
-  color: #28664f;
-  font-size: 12px;
+.info-card {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  overflow: hidden;
+  padding: 26px;
+  border: 1px solid #ffffff90;
+  border-radius: 20px;
+}
+
+.education {
+  background: linear-gradient(135deg, #edf3e3, #dce9cd);
+}
+
+.exploration {
+  background: linear-gradient(135deg, #e9f3ff, #d3e6f9);
+}
+
+.interests {
+  background: linear-gradient(135deg, #fff0df, #ffe2bd);
+}
+
+.card-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.card-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #ffffff70;
+  font-size: 28px;
+}
+
+.code-icon {
+  font-size: 20px;
   font-weight: 700;
-  letter-spacing: 2px;
 }
 
-h1 {
-  margin: 20px 0 12px;
-  font-size: clamp(26px, 4vw, 40px);
-  line-height: 1.4;
+h3 {
+  margin: 0;
+  font-size: 19px;
 }
 
-.subtitle {
-  color: #6c7d73;
+strong {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 24px;
+  line-height: 1.5;
+}
+
+.info-card p {
+  margin: 5px 0;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+li {
+  margin-top: 8px;
+  font-size: 19px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.interest-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.interest-list span {
+  padding: 6px 12px;
+  border: 1px solid #bd794622;
+  border-radius: 10px;
+  background: #ffffff70;
+  font-size: 17px;
+}
+
+.decoration {
+  position: absolute;
+  z-index: -1;
+  right: -8px;
+  bottom: -40px;
+  color: #38643b;
+  font-size: 150px;
+  line-height: 1;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.brackets {
+  right: -12px;
+  bottom: -12px;
+  color: #275b9a;
+  font-size: 110px;
+  transform: rotate(-12deg);
+}
+
+.sunshine {
+  color: #b26822;
+  bottom: -30px;
+}
+
+.more-details {
+  margin-top: 20px;
+  padding: 18px 22px;
+  border: 1px solid #dfe6dc;
+  border-radius: 14px;
+  background: #fffdf8;
+}
+
+summary {
+  color: #345b46;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+summary:focus-visible {
+  outline: 3px solid #91b897;
+  outline-offset: 4px;
 }
 
 .profile-details {
-  margin: 28px 0 0;
+  margin: 20px 0 0;
 }
 
 .profile-details > div {
   display: grid;
-  grid-template-columns: 140px minmax(0, 1fr);
+  grid-template-columns: 130px minmax(0, 1fr);
   gap: 16px;
-  padding: 14px 0;
+  padding: 12px 0;
   border-top: 1px solid #203d3512;
 }
 
@@ -132,13 +328,50 @@ dd {
   overflow-wrap: anywhere;
 }
 
+.intro-sections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.intro-section {
+  min-width: 0;
+  margin-top: 20px;
+  padding: 24px;
+  border: 1px solid #dfe6dc;
+  border-radius: 16px;
+  background: #fffdf8;
+}
+
+.intro-section p {
+  margin: 12px 0 0;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .error {
   color: #a63e35;
 }
 
+@media (max-width: 900px) {
+  .overview-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .education {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (max-width: 600px) {
-  .profile-card {
-    padding: 24px;
+  .overview-grid,
+  .intro-sections {
+    grid-template-columns: 1fr;
+  }
+
+  .info-card {
+    padding: 22px;
   }
 
   .profile-details > div {
@@ -146,21 +379,32 @@ dd {
     gap: 4px;
   }
 }
-.intro-section {
-  margin-top: 28px;
-  padding-top: 24px;
-  border-top: 1px solid #203d3518;
+
+/* 上半部放文字，下半部展示插画 */
+.info-card {
+  min-height: 360px;
+  padding-bottom: 170px;
 }
 
-.intro-section h2 {
-  margin: 0 0 12px;
-  font-size: 22px;
+.card-art {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 175px;
+  object-fit: contain;
+  object-position: right bottom;
+  pointer-events: none;
 }
 
-.intro-section p {
-  margin: 0;
-  line-height: 1.9;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
+@media (max-width: 600px) {
+  .info-card {
+    min-height: 330px;
+    padding-bottom: 155px;
+  }
+
+  .card-art {
+    height: 160px;
+  }
 }
 </style>
