@@ -122,117 +122,61 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+/* 轮播卡片与主图 */
 .carousel {
-  padding: 28px;
+  min-width: 0;
+  padding: 18px;
   background: #fff;
   border: 1px solid #dfe6dc;
-  border-radius: 24px;
+  border-radius: 20px;
+  box-shadow: 0 12px 32px #203d3508;
 }
-
-.eyebrow {
-  color: #28664f;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 2px;
-}
-
 h2 {
-  margin: 10px 0;
-  font-size: 26px;
+  margin: 0 0 14px;
+  font-size: 20px;
 }
-
-header p {
-  margin: 0 0 24px;
-  color: #6c7d73;
-}
-
 figure {
   margin: 0;
 }
-
 img {
   display: block;
   width: 100%;
-  height: clamp(240px, 40vw, 460px);
+  height: clamp(240px, 28vw, 360px);
   object-fit: contain;
   background: #edf1e9;
-  border-radius: 16px;
+  border-radius: 12px;
 }
-
 figcaption {
-  padding: 16px 0;
+  padding: 12px 0;
   text-align: center;
+  font-size: 16px;
   overflow-wrap: anywhere;
 }
-
+/* 前后切换与播放控制 */
 .controls {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 8px;
 }
-
 button {
-  padding: 10px 16px;
+  padding: 8px 12px;
   border: 1px solid #dfe6dc;
   border-radius: 10px;
   background: #eef4e9;
   color: #203d35;
+  font-size: 14px;
   cursor: pointer;
 }
-
 button:hover {
   background: #dfead8;
 }
-
 button:focus-visible {
   outline: 3px solid #28664f;
   outline-offset: 3px;
 }
-
-@media (max-width: 600px) {
-  .carousel {
-    padding: 20px;
-  }
-}
-.carousel {
-  min-width: 0;
-  padding: 18px;
-  border-radius: 20px;
-  box-shadow: 0 12px 32px #203d3508;
-}
-
-h2 {
-  margin: 0 0 14px;
-  font-size: 20px;
-}
-
-img {
-  height: clamp(240px, 28vw, 360px);
-  object-fit: contain;
-  border-radius: 12px;
-}
-
-figcaption {
-  padding: 12px 0;
-  font-size: 16px;
-}
-
-.controls {
-  gap: 8px;
-}
-
-button {
-  padding: 8px 12px;
-  font-size: 14px;
-}
-
-@media (max-width: 760px) {
-  img {
-    height: 280px;
-  }
-}
+/* 缩略图 */
 .thumbnails {
   display: flex;
   gap: 10px;
@@ -240,7 +184,6 @@ button {
   padding: 6px 4px 12px;
   margin-bottom: 10px;
 }
-
 .thumbnail {
   flex: 0 0 76px;
   padding: 3px;
@@ -249,7 +192,6 @@ button {
   background: #edf1e9;
   cursor: pointer;
 }
-
 .thumbnail img {
   display: block;
   width: 100%;
@@ -257,18 +199,21 @@ button {
   object-fit: contain;
   border-radius: 5px;
 }
-
-.thumbnail:hover {
+.thumbnail:hover, .thumbnail.selected {
   background: #dfe8d7;
 }
-
 .thumbnail.selected {
   border-color: #28664f;
-  background: #dfe8d7;
 }
-
 .thumbnail:focus-visible {
   outline: 3px solid #b8794f;
   outline-offset: 2px;
 }
+/* 手机：只调整主图，保留缩略图尺寸 */
+@media (max-width: 760px) {
+  figure > img {
+    height: 280px;
+  }
+}
+
 </style>

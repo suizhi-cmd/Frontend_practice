@@ -166,41 +166,37 @@ function splitItems(text: string) {
 </template>
 
 <style scoped>
+/* 三张主要信息卡片 */
 .overview-grid {
   display: grid;
   grid-template-columns: 1.15fr 1fr 1fr;
   gap: 18px;
 }
-
 .info-card {
   position: relative;
   isolation: isolate;
   min-width: 0;
+  min-height: 360px;
   overflow: hidden;
-  padding: 26px;
+  padding: 26px 26px 170px;
   border: 1px solid #ffffff90;
   border-radius: 20px;
 }
-
 .education {
   background: linear-gradient(135deg, #edf3e3, #dce9cd);
 }
-
 .exploration {
   background: linear-gradient(135deg, #e9f3ff, #d3e6f9);
 }
-
 .interests {
   background: linear-gradient(135deg, #fff0df, #ffe2bd);
 }
-
 .card-heading {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 20px;
 }
-
 .card-icon {
   display: grid;
   place-items: center;
@@ -211,49 +207,41 @@ function splitItems(text: string) {
   background: #ffffff70;
   font-size: 28px;
 }
-
 .code-icon {
   font-size: 20px;
   font-weight: 700;
 }
-
 h3 {
   margin: 0;
   font-size: 19px;
 }
-
 strong {
   display: block;
   margin-bottom: 10px;
   font-size: 24px;
   line-height: 1.5;
 }
-
 .info-card p {
   margin: 5px 0;
   line-height: 1.8;
   overflow-wrap: anywhere;
 }
-
 ul {
   margin: 0;
   padding: 0;
   list-style: none;
 }
-
 li {
   margin-top: 8px;
   font-size: 19px;
   font-weight: 600;
   overflow-wrap: anywhere;
 }
-
 .interest-list {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 }
-
 .interest-list span {
   padding: 6px 12px;
   border: 1px solid #bd794622;
@@ -261,131 +249,6 @@ li {
   background: #ffffff70;
   font-size: 17px;
 }
-
-.decoration {
-  position: absolute;
-  z-index: -1;
-  right: -8px;
-  bottom: -40px;
-  color: #38643b;
-  font-size: 150px;
-  line-height: 1;
-  opacity: 0.08;
-  pointer-events: none;
-}
-
-.brackets {
-  right: -12px;
-  bottom: -12px;
-  color: #275b9a;
-  font-size: 110px;
-  transform: rotate(-12deg);
-}
-
-.sunshine {
-  color: #b26822;
-  bottom: -30px;
-}
-
-.more-details {
-  margin-top: 20px;
-  padding: 18px 22px;
-  border: 1px solid #dfe6dc;
-  border-radius: 14px;
-  background: #fffdf8;
-}
-
-summary {
-  color: #345b46;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-summary:focus-visible {
-  outline: 3px solid #91b897;
-  outline-offset: 4px;
-}
-
-.profile-details {
-  margin: 20px 0 0;
-}
-
-.profile-details > div {
-  display: grid;
-  grid-template-columns: 130px minmax(0, 1fr);
-  gap: 16px;
-  padding: 12px 0;
-  border-top: 1px solid #203d3512;
-}
-
-dt {
-  color: #6c7d73;
-}
-
-dd {
-  margin: 0;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-.intro-sections {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-}
-
-.intro-section {
-  min-width: 0;
-  margin-top: 20px;
-  padding: 24px;
-  border: 1px solid #dfe6dc;
-  border-radius: 16px;
-  background: #fffdf8;
-}
-
-.intro-section p {
-  margin: 12px 0 0;
-  line-height: 1.9;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-.error {
-  color: #a63e35;
-}
-
-@media (max-width: 900px) {
-  .overview-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .education {
-    grid-column: 1 / -1;
-  }
-}
-
-@media (max-width: 600px) {
-  .overview-grid,
-  .intro-sections {
-    grid-template-columns: 1fr;
-  }
-
-  .info-card {
-    padding: 22px;
-  }
-
-  .profile-details > div {
-    grid-template-columns: 1fr;
-    gap: 4px;
-  }
-}
-
-/* 上半部放文字，下半部展示插画 */
-.info-card {
-  min-height: 360px;
-  padding-bottom: 170px;
-}
-
 .card-art {
   position: absolute;
   right: 0;
@@ -396,15 +259,88 @@ dd {
   object-position: right bottom;
   pointer-events: none;
 }
-
+/* 展开资料 */
+.more-details {
+  margin-top: 20px;
+  padding: 18px 22px;
+  border: 1px solid #dfe6dc;
+  border-radius: 14px;
+  background: #fffdf8;
+}
+summary {
+  color: #345b46;
+  font-weight: 600;
+  cursor: pointer;
+}
+summary:focus-visible {
+  outline: 3px solid #91b897;
+  outline-offset: 4px;
+}
+.profile-details {
+  margin: 20px 0 0;
+}
+.profile-details > div {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid #203d3512;
+}
+dt {
+  color: #6c7d73;
+}
+dd {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+/* 普通介绍区块 */
+.intro-sections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.intro-section {
+  min-width: 0;
+  margin-top: 20px;
+  padding: 24px;
+  border: 1px solid #dfe6dc;
+  border-radius: 16px;
+  background: #fffdf8;
+}
+.intro-section p {
+  margin: 12px 0 0;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.error {
+  color: #a63e35;
+}
+/* 平板与手机 */
+@media (max-width: 900px) {
+  .overview-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .education {
+    grid-column: 1 / -1;
+  }
+}
 @media (max-width: 600px) {
+  .overview-grid, .intro-sections {
+    grid-template-columns: 1fr;
+  }
   .info-card {
     min-height: 330px;
-    padding-bottom: 155px;
+    padding: 22px 22px 155px;
   }
-
   .card-art {
     height: 160px;
   }
+  .profile-details > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
 }
+
 </style>

@@ -9,3 +9,11 @@
 * 写编辑个人资料那一块代码迁移的时候，代码复制错文件里。第 1 段代码放 ProfileEditor.vue，第 2 段代码放 App.vue，分别替换，不能混放。
 * AI会把文件名写错：json写成js
 * IntroAssistant.vue 就是用来放 AI 助手的 Vue 组件，不用删。 我前后使用了 IntroAssistant.vue 和 AssistantChat.vue 两个名字，造成了混淆；它们承担的是同一个功能，保留一份即可。
+* 想修改界面显示，AI老师让我生成新的vue文件，有点繁琐
+* 代码生成错误：    loading="lazy"
+  >
+        </div>
+      </article>
+    </div>
+  </div>
+</template>
