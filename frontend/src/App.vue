@@ -738,9 +738,23 @@ a:focus-visible, button:focus-visible {
   }
 }
 @media (max-width: 760px) {
-  .header-inner, .footer-inner {
-    padding: 18px 20px;
-  }
+  .header-inner {
+  padding: 16px;
+  gap: 16px;
+}
+.brand {
+  min-width: 0;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.brand-mark {
+  font-size: 24px;
+}
+
+.management {
+  margin-left: auto;
+}
   .header-banner {
   height: 140px;
   object-position: 60% center;
@@ -751,23 +765,41 @@ a:focus-visible, button:focus-visible {
   opacity: 0.4;
 }
   .navigation {
-    order: 3;
-    width: 100%;
-  }
+  order: 3;
+  width: 100%;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+}
+
+.navigation a {
+  font-size: 14px;
+}
   .page {
-    padding: 24px 20px 40px;
+    padding: 24px 16px 40px;
   }
   .hero {
-    grid-template-columns: 1fr;
-    gap: 28px;
-    padding-top: 8px;
-  }
-  .hero-copy {
-    padding: 8px 0;
-  }
-  .hero-description {
-    font-size: 17px;
-  }
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  padding-top: 8px;
+}
+
+.hero-copy {
+  min-width: 0;
+  padding: 8px 0;
+}
+
+.hero h1 {
+  font-size: 40px;
+  line-height: 1.3;
+  letter-spacing: -1px;
+}
+
+.hero-description {
+  max-width: 100%;
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
   .footer-inner {
   align-items: flex-start;
   gap: 24px;

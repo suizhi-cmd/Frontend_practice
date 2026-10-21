@@ -2,7 +2,7 @@
   "school": "电子科技大学",
   "college": "信息与软件工程学院",
   "major": "软件工程（人工智能+复合型专业）",
-  "interests": "吃喝玩乐，听音乐，打羽毛球🏸",
+  "interests": "吃喝玩乐，听音乐，打羽毛球🏸，看小说",
   "learning": "前端开发，学习计算机编译原理，组成原理，正在备考中...",
   "currentProject": "综设项目：个人网贷 AI 风控系统",
   "pastProjects": "大一下学期的 PBLF 项目",
@@ -20,6 +20,11 @@
     {
       "title": "个人网贷AI风控系统",
       "content": "项目背景：大学本科综设\n正在进行中...\n已完成：可信性分析报告，技术栈分析报告，泳道图分析报告",
+      "type": "project"
+    },
+    {
+      "title": "PBLF",
+      "content": "设计了一个衣橱管理系统",
       "type": "project"
     }
   ]
