@@ -762,7 +762,9 @@ a:focus-visible, button:focus-visible {
 
 .portfolio::before {
   background-position: center;
-  opacity: 0.4;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  opacity: 0.65;
 }
   .navigation {
   order: 3;
