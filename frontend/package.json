@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@netlify/blobs": "^11.1.6",
     "vue": "^3.5.42"
   },
   "devDependencies": {
