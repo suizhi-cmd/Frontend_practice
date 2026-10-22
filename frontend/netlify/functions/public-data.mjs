@@ -1,6 +1,6 @@
 import { getStore } from '@netlify/blobs'
 import { timingSafeEqual } from 'node:crypto'
-import photos from '../../data/photos.json' with { type: 'json' }
+
 import initialProfile from '../../data/profile.json' with { type: 'json' }
 
 const fields = [
@@ -83,20 +83,8 @@ function cleanProfile(body) {
 export default async function handler(request) {
   const pathname = new URL(request.url).pathname
 
-  if (!['/api/photos', '/api/profile'].includes(pathname)) {
+  if (pathname !== '/api/profile') {
     return json({ error: '接口不存在。' }, 404)
-  }
-
-  if (pathname === '/api/photos') {
-    if (request.method !== 'GET') {
-      return json(
-        { error: '线上照片管理功能尚未接入。' },
-        405,
-        { Allow: 'GET' },
-      )
-    }
-
-    return json(photos)
   }
 
   if (!['GET', 'PUT'].includes(request.method)) {
@@ -178,5 +166,5 @@ export default async function handler(request) {
 }
 
 export const config = {
-  path: ['/api/photos', '/api/profile'],
+  path: ['/api/profile'],
 }

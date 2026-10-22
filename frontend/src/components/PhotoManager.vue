@@ -108,8 +108,8 @@ function selectPhoto(event: Event) {
 
   if (!file) return
 
-  if (file.size > 10 * 1024 * 1024) {
-    status.value = '照片不能超过 10 MB。'
+  if (file.size > 4 * 1024 * 1024) {
+    status.value = '照片不能超过 4 MB。'
     input.value = ''
     return
   }
@@ -187,7 +187,7 @@ async function uploadPhoto() {
   <fieldset :disabled="uploading || saving">
     <legend>上传新照片</legend>
 
-    <p>支持 JPG、PNG、WebP，单张不超过 10 MB。</p>
+    <p>支持 JPG、PNG、WebP，单张不超过 4 MB。</p>
 
     <label for="upload-photo">选择照片</label>
     <input
