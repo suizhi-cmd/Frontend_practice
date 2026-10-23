@@ -1,146 +1,179 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
-import LoginPanel from './components/LoginPanel.vue'
-import ProfileCard from './components/ProfileCard.vue'
-import PhotoCarousel from './components/PhotoCarousel.vue'
-import ProfileEditor from './components/ProfileEditor.vue'
-import PhotoManager from './components/PhotoManager.vue'
-import IntroAssistant from './components/IntroAssistant.vue'
-import MessageBoard from './components/MessageBoard.vue'
-import ProjectShowcase from './components/ProjectShowcase.vue'
+import { onMounted, ref, watch } from "vue";
+import LoginPanel from "./components/LoginPanel.vue";
+import ProfileCard from "./components/ProfileCard.vue";
+import PhotoCarousel from "./components/PhotoCarousel.vue";
+import ProfileEditor from "./components/ProfileEditor.vue";
+import PhotoManager from "./components/PhotoManager.vue";
+import IntroAssistant from "./components/IntroAssistant.vue";
+import MessageBoard from "./components/MessageBoard.vue";
+import ProjectShowcase from "./components/ProjectShowcase.vue";
 
-const editing = ref(false)
-const hasUnsavedChanges = ref(false)
-const managingPhotos = ref(false)
+const editing = ref(false);
+const hasUnsavedChanges = ref(false);
+const managingPhotos = ref(false);
 
 function togglePhotos() {
-  managingPhotos.value = !managingPhotos.value
+  managingPhotos.value = !managingPhotos.value;
 }
 
 function toggleEditing() {
   if (
     editing.value &&
     hasUnsavedChanges.value &&
-    !window.confirm('资料尚未保存，确定放弃修改并返回主页吗？')
+    !window.confirm("资料尚未保存，确定放弃修改并返回主页吗？")
   ) {
-    return
+    return;
   }
 
-  hasUnsavedChanges.value = false
-  editing.value = !editing.value
+  hasUnsavedChanges.value = false;
+  editing.value = !editing.value;
 }
-const profileVersion = ref(0)
+const profileVersion = ref(0);
 
 function handleSaved() {
-  profileVersion.value += 1
+  profileVersion.value += 1;
 }
 
 interface LifePhoto {
-  src: string
-  title: string
+  src: string;
+  title: string;
 }
 
-const lifePhotos = ref<LifePhoto[]>([])
-const lifeLoading = ref(true)
-const lifeError = ref('')
+const lifePhotos = ref<LifePhoto[]>([]);
+const lifeLoading = ref(true);
+const lifeError = ref("");
 
 async function loadLifePhotos() {
-  lifeLoading.value = true
-  lifeError.value = ''
+  lifeLoading.value = true;
+  lifeError.value = "";
 
   try {
-    const response = await fetch('/api/photos', {
-      cache: 'no-store',
-    })
+    const response = await fetch("/api/photos", {
+      cache: "no-store",
+    });
 
-    if (!response.ok) throw new Error('读取照片失败')
+    if (!response.ok) throw new Error("读取照片失败");
 
-    const data: unknown = await response.json()
+    const data: unknown = await response.json();
 
     if (
       !Array.isArray(data) ||
-      !data.every((photo) =>
-        photo !== null &&
-        typeof photo === 'object' &&
-        typeof photo.src === 'string' &&
-        typeof photo.title === 'string'
+      !data.every(
+        (photo) =>
+          photo !== null &&
+          typeof photo === "object" &&
+          typeof photo.src === "string" &&
+          typeof photo.title === "string",
       )
     ) {
-      throw new Error('照片格式不正确')
+      throw new Error("照片格式不正确");
     }
 
-    lifePhotos.value = data.slice(0, 4)
+    lifePhotos.value = data.slice(0, 4);
   } catch {
-    lifeError.value = '暂时无法加载照片，请稍后刷新。'
+    lifeError.value = "暂时无法加载照片，请稍后刷新。";
   } finally {
-    lifeLoading.value = false
+    lifeLoading.value = false;
   }
 }
 
-const authenticated = ref(false)
-const checkingSession = ref(true)
-const sessionError = ref('')
-const loggingOut = ref(false)
+const authenticated = ref(false);
+const checkingSession = ref(true);
+const sessionError = ref("");
+const loggingOut = ref(false);
 
 async function checkSession() {
-  checkingSession.value = true
-  sessionError.value = ''
+  checkingSession.value = true;
+  sessionError.value = "";
   try {
-    const response = await fetch('/api/auth/session', { cache: 'no-store', credentials: 'same-origin', signal: AbortSignal.timeout(15000) })
-    if (!(response.headers.get('Content-Type') || '').includes('application/json')) throw new Error('登录接口尚未就绪，请稍后刷新。')
-    const data = await response.json()
-    if (!response.ok) throw new Error(data.error || '无法检查登录状态。')
-    authenticated.value = data.authenticated === true
-    if (authenticated.value) await loadLifePhotos()
+    const response = await fetch("/api/auth/session", {
+      cache: "no-store",
+      credentials: "same-origin",
+      signal: AbortSignal.timeout(15000),
+    });
+    if (
+      !(response.headers.get("Content-Type") || "").includes("application/json")
+    )
+      throw new Error("登录接口尚未就绪，请稍后刷新。");
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "无法检查登录状态。");
+    authenticated.value = data.authenticated === true;
+    if (authenticated.value) await loadLifePhotos();
   } catch (error) {
-    sessionError.value = error instanceof Error ? error.message : '连接失败，请重试。'
-  } finally { checkingSession.value = false }
+    sessionError.value =
+      error instanceof Error ? error.message : "连接失败，请重试。";
+  } finally {
+    checkingSession.value = false;
+  }
 }
 
 async function handleLoggedIn() {
-  await checkSession()
-  if (!authenticated.value && !sessionError.value) sessionError.value = '登录状态未能保存，请允许本站使用 Cookie 后重试。'
+  await checkSession();
+  if (!authenticated.value && !sessionError.value)
+    sessionError.value = "登录状态未能保存，请允许本站使用 Cookie 后重试。";
 }
 
 async function logout() {
-  if (loggingOut.value) return
-  if (hasUnsavedChanges.value && !window.confirm('资料尚未保存，确定放弃修改并退出吗？')) return
-  loggingOut.value = true
+  if (loggingOut.value) return;
+  if (
+    hasUnsavedChanges.value &&
+    !window.confirm("资料尚未保存，确定放弃修改并退出吗？")
+  )
+    return;
+  loggingOut.value = true;
   try {
-    const response = await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin', signal: AbortSignal.timeout(15000) })
-    if (!response.ok) throw new Error('退出失败，请稍后重试。')
-    authenticated.value = false
-    editing.value = false
-    managingPhotos.value = false
-    hasUnsavedChanges.value = false
-    lifePhotos.value = []
-    sessionError.value = ''
-    window.history.replaceState(null, '', window.location.pathname + window.location.search)
-  } catch (error) { window.alert(error instanceof Error ? error.message : '退出失败，请重试。') }
-  finally { loggingOut.value = false }
+    const response = await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "same-origin",
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!response.ok) throw new Error("退出失败，请稍后重试。");
+    authenticated.value = false;
+    editing.value = false;
+    managingPhotos.value = false;
+    hasUnsavedChanges.value = false;
+    lifePhotos.value = [];
+    sessionError.value = "";
+    window.history.replaceState(
+      null,
+      "",
+      window.location.pathname + window.location.search,
+    );
+  } catch (error) {
+    window.alert(error instanceof Error ? error.message : "退出失败，请重试。");
+  } finally {
+    loggingOut.value = false;
+  }
 }
 
-onMounted(checkSession)
+onMounted(checkSession);
 
 // 退出照片管理后，更新照片墙
 watch(managingPhotos, (current, previous) => {
   if (authenticated.value && previous && !current) {
-    loadLifePhotos()
+    loadLifePhotos();
   }
-})
+});
 </script>
 
 <template>
-  <LoginPanel v-if="!authenticated" :checking="checkingSession" :check-error="sessionError" @logged-in="handleLoggedIn" @retry="checkSession" />
+  <LoginPanel
+    v-if="!authenticated"
+    :checking="checkingSession"
+    :check-error="sessionError"
+    @logged-in="handleLoggedIn"
+    @retry="checkSession"
+  />
   <div v-else id="page-top" class="portfolio">
     <header class="site-header">
       <img
-  class="header-banner"
-  src="/illustrations/header-campus.png"
-  alt=""
-  aria-hidden="true"
-  fetchpriority="high"
->
+        class="header-banner"
+        src="/illustrations/header-campus.png"
+        alt=""
+        aria-hidden="true"
+        fetchpriority="high"
+      />
       <div class="header-inner">
         <div class="brand">
           <span class="brand-mark">绥之</span>
@@ -160,40 +193,25 @@ watch(managingPhotos, (current, previous) => {
         </nav>
 
         <div class="management">
-  <button type="button" :disabled="loggingOut" @click="logout">{{ loggingOut ? '正在退出…' : '退出登录' }}</button>
-  <details
-    v-if="!editing && !managingPhotos"
-    class="management-menu"
-  >
-    <summary>内容管理 ▾</summary>
+          <button type="button" :disabled="loggingOut" @click="logout">
+            {{ loggingOut ? "正在退出…" : "退出登录" }}
+          </button>
+          <details v-if="!editing && !managingPhotos" class="management-menu">
+            <summary>内容管理 ▾</summary>
 
-    <div class="management-options">
-      <button type="button" @click="toggleEditing">
-        编辑个人资料
-      </button>
+            <div class="management-options">
+              <button type="button" @click="toggleEditing">编辑个人资料</button>
 
-      <button type="button" @click="togglePhotos">
-        管理照片
-      </button>
-    </div>
-  </details>
+              <button type="button" @click="togglePhotos">管理照片</button>
+            </div>
+          </details>
 
-  <button
-    v-else-if="editing"
-    type="button"
-    @click="toggleEditing"
-  >
-    返回主页
-  </button>
+          <button v-else-if="editing" type="button" @click="toggleEditing">
+            返回主页
+          </button>
 
-  <button
-    v-else
-    type="button"
-    @click="togglePhotos"
-  >
-    返回主页
-  </button>
-</div>
+          <button v-else type="button" @click="togglePhotos">返回主页</button>
+        </div>
       </div>
     </header>
 
@@ -208,31 +226,27 @@ watch(managingPhotos, (current, previous) => {
 
       <template v-else>
         <!-- 首屏 -->
-       <section id="top" class="hero" aria-labelledby="hero-title">
-  <div class="hero-copy">
-  <h1 id="hero-title">
-    你好，<br>
-    我是<span class="name-highlight">绥之。</span>
-  </h1>
+        <section id="top" class="hero" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <h1 id="hero-title">
+              你好，<br />
+              我是<span class="name-highlight">绥之。</span>
+            </h1>
 
-  <p class="hero-description">
-    电子科技大学在读本科生，在学习与实践中探索更多可能。
-  </p>
+            <p class="hero-description">
+              电子科技大学在读本科生，在学习与实践中探索更多可能。
+            </p>
 
-  <div class="hero-actions">
-    <a class="primary-link" href="#projects">
-      查看我的项目 →
-    </a>
+            <div class="hero-actions">
+              <a class="primary-link" href="#projects"> 查看我的项目 → </a>
 
-    <a class="chat-link" href="#assistant">
-      和助手聊聊
-    </a>
-  </div>
-</div>
+              <a class="chat-link" href="#assistant"> 和助手聊聊 </a>
+            </div>
+          </div>
 
-  <PhotoCarousel />
-</section>
-        
+          <PhotoCarousel />
+        </section>
+
         <!-- 个人介绍 -->
         <section id="about" class="chapter" aria-labelledby="about-title">
           <header class="chapter-heading">
@@ -243,97 +257,85 @@ watch(managingPhotos, (current, previous) => {
           <ProfileCard :key="profileVersion" />
         </section>
         <!-- 新增：项目经历 -->
-<section
-  id="projects"
-  class="chapter"
-  aria-labelledby="projects-title"
->
-  <header class="chapter-heading">
-    <h2 id="projects-title">把想法变成作品。</h2>
-    <span class="accent-line"></span>
-  </header>
+        <section id="projects" class="chapter" aria-labelledby="projects-title">
+          <header class="chapter-heading">
+            <h2 id="projects-title">把想法变成作品。</h2>
+            <span class="accent-line"></span>
+          </header>
 
-  <ProjectShowcase :key="profileVersion" />
-</section>
+          <ProjectShowcase :key="profileVersion" />
+        </section>
 
-<section
-  id="life"
-  class="chapter life-section"
-  aria-labelledby="life-title"
->
-  <header class="life-heading">
-    <div>
-      <h2 id="life-title">生活不止代码</h2>
-      <span class="life-accent"></span>
-    </div>
-
-    <a href="#top">回到轮播，查看更多 →</a>
-  </header>
-
-  <p v-if="lifeLoading" role="status">正在加载照片…</p>
-  <p v-else-if="lifeError" role="alert">{{ lifeError }}</p>
-  <p v-else-if="lifePhotos.length === 0">
-    等待记录新的生活瞬间。
-  </p>
-
-  <div v-else class="life-gallery">
-    <figure
-      v-for="photo in lifePhotos"
-      :key="photo.src"
-      class="life-photo"
-    >
-      <div class="life-image">
-        <img
-          :src="photo.src"
-          :alt="photo.title"
-          loading="lazy"
+        <section
+          id="life"
+          class="chapter life-section"
+          aria-labelledby="life-title"
         >
-      </div>
+          <header class="life-heading">
+            <div>
+              <h2 id="life-title">生活不止代码</h2>
+              <span class="life-accent"></span>
+            </div>
 
-      <figcaption>{{ photo.title }}</figcaption>
-    </figure>
-  </div>
-</section>
+            <a href="#top">回到轮播，查看更多 →</a>
+          </header>
 
-<!-- AI 助手 -->
-<div class="interaction-grid">
-  <section id="assistant" class="interaction-panel">
-    <IntroAssistant />
-  </section>
+          <p v-if="lifeLoading" role="status">正在加载照片…</p>
+          <p v-else-if="lifeError" role="alert">{{ lifeError }}</p>
+          <p v-else-if="lifePhotos.length === 0">等待记录新的生活瞬间。</p>
 
-  <section id="messages" class="interaction-panel">
-    <MessageBoard />
-  </section>
-</div>
+          <div v-else class="life-gallery">
+            <figure
+              v-for="photo in lifePhotos"
+              :key="photo.src"
+              class="life-photo"
+            >
+              <div class="life-image">
+                <img :src="photo.src" :alt="photo.title" loading="lazy" />
+              </div>
+
+              <figcaption>{{ photo.title }}</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <!-- AI 助手 -->
+        <div class="interaction-grid">
+          <section id="assistant" class="interaction-panel">
+            <IntroAssistant />
+          </section>
+
+          <section id="messages" class="interaction-panel">
+            <MessageBoard />
+          </section>
+        </div>
       </template>
     </main>
 
     <footer class="site-footer">
-  <img
-    class="footer-landscape"
-    src="/illustrations/footer-landscape.png"
-    alt=""
-    aria-hidden="true"
-  >
+      <img
+        class="footer-landscape"
+        src="/illustrations/footer-landscape.png"
+        alt=""
+        aria-hidden="true"
+      />
 
-  <div class="footer-base">
-    <div class="footer-inner">
-      <div class="footer-identity">
-        <span class="brand-mark">绥之</span>
-        <p>电子科技大学在读本科生</p>
+      <div class="footer-base">
+        <div class="footer-inner">
+          <div class="footer-identity">
+            <span class="brand-mark">绥之</span>
+            <p>电子科技大学在读本科生</p>
+          </div>
+
+          <div class="footer-message">
+            <p>保持好奇，持续更新。</p>
+            <span>学习、项目，以及生活里的小小收获。</span>
+          </div>
+
+          <a class="back-to-top" href="#page-top"> 返回顶部 ↑ </a>
+        </div>
       </div>
-
-      <div class="footer-message">
-        <p>保持好奇，持续更新。</p>
-        <span>学习、项目，以及生活里的小小收获。</span>
-      </div>
-
-      <a class="back-to-top" href="#page-top">
-        返回顶部 ↑
-      </a>
-    </div>
-  </div>
-</footer>
+    </footer>
   </div>
 </template>
 
@@ -370,7 +372,8 @@ watch(managingPhotos, (current, previous) => {
   object-fit: cover;
   object-position: center 58%;
 }
-.header-inner, .footer-inner {
+.header-inner,
+.footer-inner {
   max-width: 1200px;
   margin: 0 auto;
   padding: 18px 28px;
@@ -395,7 +398,8 @@ watch(managingPhotos, (current, previous) => {
   letter-spacing: 1px;
   white-space: nowrap;
 }
-.navigation, .management {
+.navigation,
+.management {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -510,7 +514,7 @@ watch(managingPhotos, (current, previous) => {
   display: inline-block;
 }
 .name-highlight::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 8%;
   right: 0;
@@ -567,7 +571,7 @@ watch(managingPhotos, (current, previous) => {
 }
 .chapter-heading h2 {
   margin: 10px 0 14px;
-  font-family: 'Songti SC', 'SimSun', serif;
+  font-family: "Songti SC", "SimSun", serif;
   font-size: clamp(25px, 3vw, 34px);
   line-height: 1.5;
 }
@@ -676,7 +680,8 @@ watch(managingPhotos, (current, previous) => {
   border: 1px solid #f0ddc4;
   border-radius: 22px;
 }
-#assistant :deep(textarea), #messages :deep(textarea) {
+#assistant :deep(textarea),
+#messages :deep(textarea) {
   background: #ffffffd9;
   border-color: #ffffff;
 }
@@ -688,13 +693,16 @@ watch(managingPhotos, (current, previous) => {
   background: #ffffffa6;
   border-color: #ffffff90;
 }
-#assistant :deep(.form-bottom), #messages :deep(.form-bottom) {
+#assistant :deep(.form-bottom),
+#messages :deep(.form-bottom) {
   align-items: flex-start;
 }
-#assistant :deep(.form-bottom span), #messages :deep(.form-bottom span) {
+#assistant :deep(.form-bottom span),
+#messages :deep(.form-bottom span) {
   flex: 1 1 180px;
 }
-#assistant :deep(button), #messages :deep(button) {
+#assistant :deep(button),
+#messages :deep(button) {
   flex-shrink: 0;
 }
 /* 页尾与键盘焦点 */
@@ -763,18 +771,19 @@ watch(managingPhotos, (current, previous) => {
 .back-to-top:hover {
   background: #ffffff18;
 }
-a:focus-visible, button:focus-visible {
+a:focus-visible,
+button:focus-visible {
   outline: 3px solid #b8794f;
   outline-offset: 4px;
 }
 /* 平板与手机 */
 @media (max-width: 900px) {
   .life-gallery {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  align-items: start;
-  gap: 18px;
-}
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: start;
+    gap: 18px;
+  }
 }
 @media (max-width: 850px) {
   .interaction-grid {
@@ -785,82 +794,82 @@ a:focus-visible, button:focus-visible {
 }
 @media (max-width: 760px) {
   .header-inner {
-  padding: 16px;
-  gap: 16px;
-}
-.brand {
-  min-width: 0;
-  gap: 10px;
-  font-size: 13px;
-}
+    padding: 16px;
+    gap: 16px;
+  }
+  .brand {
+    min-width: 0;
+    gap: 10px;
+    font-size: 13px;
+  }
 
-.brand-mark {
-  font-size: 24px;
-}
+  .brand-mark {
+    font-size: 24px;
+  }
 
-.management {
-  margin-left: auto;
-}
+  .management {
+    margin-left: auto;
+  }
   .header-banner {
-  height: 140px;
-  object-position: 60% center;
-}
+    height: 140px;
+    object-position: 60% center;
+  }
 
-.portfolio::before {
-  background-position: center;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  opacity: 0.65;
-}
+  .portfolio::before {
+    background-position: center;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    opacity: 0.65;
+  }
   .navigation {
-  order: 3;
-  width: 100%;
-  min-width: 0;
-  flex-wrap: wrap;
-  gap: 10px 18px;
-}
+    order: 3;
+    width: 100%;
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+  }
 
-.navigation a {
-  font-size: 14px;
-}
+  .navigation a {
+    font-size: 14px;
+  }
   .page {
     padding: 24px 16px 40px;
   }
   .hero {
-  grid-template-columns: minmax(0, 1fr);
-  gap: 24px;
-  padding-top: 8px;
-}
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding-top: 8px;
+  }
 
-.hero-copy {
-  min-width: 0;
-  padding: 8px 0;
-}
+  .hero-copy {
+    min-width: 0;
+    padding: 8px 0;
+  }
 
-.hero h1 {
-  font-size: 40px;
-  line-height: 1.3;
-  letter-spacing: -1px;
-}
+  .hero h1 {
+    font-size: 40px;
+    line-height: 1.3;
+    letter-spacing: -1px;
+  }
 
-.hero-description {
-  max-width: 100%;
-  font-size: 16px;
-  overflow-wrap: anywhere;
-}
+  .hero-description {
+    max-width: 100%;
+    font-size: 16px;
+    overflow-wrap: anywhere;
+  }
   .footer-inner {
-  align-items: flex-start;
-  gap: 24px;
-}
+    align-items: flex-start;
+    gap: 24px;
+  }
 
-.footer-message {
-  width: 100%;
-  order: 3;
-}
+  .footer-message {
+    width: 100%;
+    order: 3;
+  }
 
-.footer-message span {
-  display: block;
-}
+  .footer-message span {
+    display: block;
+  }
 }
 @media (max-width: 500px) {
   .life-gallery {
@@ -870,5 +879,4 @@ a:focus-visible, button:focus-visible {
     font-size: 26px;
   }
 }
-
 </style>

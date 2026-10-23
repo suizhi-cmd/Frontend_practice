@@ -1,500 +1,499 @@
-
 /* 整个网页 */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #eef2ff;
-    min-height: 100vh;
-    margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #eef2ff;
+  min-height: 100vh;
+  margin: 0;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* 登录卡片 */
 .login-box {
-    width: 320px;
-    padding: 35px;
-    background-color: white;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  width: 320px;
+  padding: 35px;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 /* 标题 */
 h1 {
-    text-align: center;
-    color: #333;
+  text-align: center;
+  color: #333;
 }
 
 /* 说明文字 */
 .login-box > p {
-    text-align: center;
-    color: #777;
+  text-align: center;
+  color: #777;
 }
 
 /* 输入框 */
 input {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0 18px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0 18px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
 /* 登录按钮 */
 button {
-    width: 100%;
-    padding: 12px;
-    background-color: #4169c9;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
+  width: 100%;
+  padding: 12px;
+  background-color: #4169c9;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 /* 鼠标悬停 */
 button:hover {
-    background-color: #3154ac;
+  background-color: #3154ac;
 }
 
 /* 个人主页专用样式 */
 body.home-page {
-    display: block;
-    min-height: 100vh;
+  display: block;
+  min-height: 100vh;
 }
 
 .home-container {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 20px;
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
 }
 
 .home-container section {
-    background-color: white;
-    padding: 25px;
-    margin-bottom: 25px;
-    border-radius: 12px;
+  background-color: white;
+  padding: 25px;
+  margin-bottom: 25px;
+  border-radius: 12px;
 }
 
 /* 轮播图图片样式 */
 #carousel-image {
-    display: block;
-    width: 100%;
-    height: 350px;
-    object-fit: cover;
-    border-radius: 10px;
+  display: block;
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 10px;
 }
 
 /* 留言板 */
 .message-board textarea {
-    box-sizing: border-box;
-    display: block;
-    width: 100%;
-    min-height: 100px;
-    padding: 12px;
-    margin: 16px 0 12px;
-    border: 1px solid #d5dbea;
-    border-radius: 8px;
-    font: inherit;
-    resize: vertical;
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-height: 100px;
+  padding: 12px;
+  margin: 16px 0 12px;
+  border: 1px solid #d5dbea;
+  border-radius: 8px;
+  font: inherit;
+  resize: vertical;
 }
 
 .message-board textarea:focus {
-    outline: 2px solid #9bb5f5;
-    border-color: #4169c9;
+  outline: 2px solid #9bb5f5;
+  border-color: #4169c9;
 }
 
 .message-board #message-button {
-    width: auto;
-    min-width: 110px;
-    padding: 10px 18px;
-    border-radius: 8px;
-    background-color: #4169c9;
-    color: white;
-    cursor: pointer;
+  width: auto;
+  min-width: 110px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  background-color: #4169c9;
+  color: white;
+  cursor: pointer;
 }
 
 .message-board #message-button:hover {
-    background-color: #3154ac;
+  background-color: #3154ac;
 }
 
 /* 每条留言的卡片 */
 .message-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
-    padding: 14px;
-    margin-top: 12px;
-    border: 1px solid #e1e6f0;
-    border-radius: 10px;
-    background-color: #f8faff;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 14px;
+  margin-top: 12px;
+  border: 1px solid #e1e6f0;
+  border-radius: 10px;
+  background-color: #f8faff;
 }
 
 .message-content {
-    flex: 1;
-    min-width: 0;
-    margin: 0;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .message-delete {
-    width: auto;
-    flex-shrink: 0;
-    padding: 6px 10px;
-    border-radius: 6px;
-    background-color: #fff0f0;
-    color: #b42318;
-    cursor: pointer;
+  width: auto;
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background-color: #fff0f0;
+  color: #b42318;
+  cursor: pointer;
 }
 
 .message-delete:hover {
-    background-color: #ffe0e0;
+  background-color: #ffe0e0;
 }
 /* ===== 个人主页美化 ===== */
 
 :root {
-    --main-color: #28664f;
-    --text-color: #203d35;
-    --muted-color: #6c7d73;
-    --border-color: #dfe6dc;
+  --main-color: #28664f;
+  --text-color: #203d35;
+  --muted-color: #6c7d73;
+  --border-color: #dfe6dc;
 }
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
-    color: var(--text-color);
-    line-height: 1.75;
-    background: linear-gradient(135deg, #e7eedf, #f8f6f0);
+  font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+  color: var(--text-color);
+  line-height: 1.75;
+  background: linear-gradient(135deg, #e7eedf, #f8f6f0);
 }
 
 /* 主页：电脑上采用两栏布局 */
 .home-container {
-    max-width: 1120px;
-    margin: 0 auto;
-    padding: 40px 24px 60px;
-    display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: 24px;
-    align-items: start;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 24px;
+  align-items: start;
 }
 
 .home-container section {
-    min-width: 0;
-    margin: 0;
-    padding: 28px;
-    background: #ffffff;
-    border: 1px solid var(--border-color);
-    border-radius: 22px;
-    box-shadow: 0 8px 30px rgba(32, 61, 53, 0.04);
+  min-width: 0;
+  margin: 0;
+  padding: 28px;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 22px;
+  box-shadow: 0 8px 30px rgba(32, 61, 53, 0.04);
 }
 
 .home-container h2 {
-    margin: 0 0 12px;
-    font-size: 22px;
-    color: var(--text-color);
+  margin: 0 0 12px;
+  font-size: 22px;
+  color: var(--text-color);
 }
 
 .home-container p {
-    color: var(--muted-color);
+  color: var(--muted-color);
 }
 
 /* 自我介绍：横跨两栏 */
 .home-container .profile {
-    grid-column: 1 / -1;
-    padding: 40px;
-    background: linear-gradient(120deg, #e2ecda, #f4f6eb);
+  grid-column: 1 / -1;
+  padding: 40px;
+  background: linear-gradient(120deg, #e2ecda, #f4f6eb);
 }
 
 .profile::before {
-    content: "MY LITTLE CORNER / 个人空间";
-    display: block;
-    margin-bottom: 18px;
-    color: var(--main-color);
-    font-size: 12px;
-    font-weight: bold;
-    letter-spacing: 2px;
+  content: "MY LITTLE CORNER / 个人空间";
+  display: block;
+  margin-bottom: 18px;
+  color: var(--main-color);
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
 }
 
 .profile h1 {
-    margin: 0 0 24px;
-    text-align: left;
-    color: var(--text-color);
-    font-size: clamp(28px, 4vw, 42px);
-    line-height: 1.35;
+  margin: 0 0 24px;
+  text-align: left;
+  color: var(--text-color);
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1.35;
 }
 
 .profile p {
-    margin: 8px 0;
+  margin: 8px 0;
 }
 
 /* 左侧放轮播图和留言板，右侧放助手 */
 .carousel {
-    grid-column: 1;
-    grid-row: 2;
+  grid-column: 1;
+  grid-row: 2;
 }
 
 .message-board {
-    grid-column: 1;
-    grid-row: 3;
+  grid-column: 1;
+  grid-row: 3;
 }
 
 .intro-assistant {
-    grid-column: 2;
-    grid-row: 2 / span 2;
+  grid-column: 2;
+  grid-row: 2 / span 2;
 }
 
 #carousel-image {
-    height: 300px;
-    margin-top: 20px;
-    border-radius: 16px;
+  height: 300px;
+  margin-top: 20px;
+  border-radius: 16px;
 }
 
 #carousel-caption {
-    margin: 14px 0 0;
-    font-size: 14px;
+  margin: 14px 0 0;
+  font-size: 14px;
 }
 
 /* 统一输入框 */
 input,
 textarea,
 button {
-    font: inherit;
+  font: inherit;
 }
 
 input,
 .message-board textarea,
 #assistant-question {
-    width: 100%;
-    padding: 14px 16px;
-    color: var(--text-color);
-    background: #fafbf7;
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  color: var(--text-color);
+  background: #fafbf7;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
 }
 
 #assistant-question {
-    display: block;
-    min-height: 140px;
-    margin: 10px 0 16px;
-    resize: vertical;
+  display: block;
+  min-height: 140px;
+  margin: 10px 0 16px;
+  resize: vertical;
 }
 
 input:focus,
 .message-board textarea:focus,
 #assistant-question:focus {
-    outline: none;
-    border-color: var(--main-color);
-    box-shadow: 0 0 0 4px rgba(40, 102, 79, 0.12);
+  outline: none;
+  border-color: var(--main-color);
+  box-shadow: 0 0 0 4px rgba(40, 102, 79, 0.12);
 }
 
 /* 统一按钮 */
 button,
 .message-board #message-button {
-    padding: 12px 22px;
-    background: var(--main-color);
-    border-radius: 12px;
-    transition: background 0.2s;
+  padding: 12px 22px;
+  background: var(--main-color);
+  border-radius: 12px;
+  transition: background 0.2s;
 }
 
 button:hover,
 .message-board #message-button:hover {
-    background: #1c503d;
+  background: #1c503d;
 }
 
 button:focus-visible {
-    outline: 3px solid #91b897;
-    outline-offset: 3px;
+  outline: 3px solid #91b897;
+  outline-offset: 3px;
 }
 
 button:disabled {
-    opacity: 0.6;
-    cursor: wait;
+  opacity: 0.6;
+  cursor: wait;
 }
 
 /* 助手回复卡片 */
 .intro-assistant h2::before {
-    content: "✦";
-    margin-right: 10px;
-    color: var(--main-color);
+  content: "✦";
+  margin-right: 10px;
+  color: var(--main-color);
 }
 
 #assistant-form label {
-    font-size: 14px;
-    font-weight: bold;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 #assistant-reply {
-    min-height: 150px;
-    margin: 24px 0 0;
-    padding: 20px;
-    color: var(--text-color);
-    background: #eef4e9;
-    border: 1px solid #dde8d9;
-    border-radius: 16px;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
+  min-height: 150px;
+  margin: 24px 0 0;
+  padding: 20px;
+  color: var(--text-color);
+  background: #eef4e9;
+  border: 1px solid #dde8d9;
+  border-radius: 16px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 /* 留言卡片 */
 .message-item {
-    background: #fafbf7;
-    border-color: var(--border-color);
-    border-radius: 14px;
+  background: #fafbf7;
+  border-color: var(--border-color);
+  border-radius: 14px;
 }
 
 .message-content {
-    color: var(--text-color);
+  color: var(--text-color);
 }
 
 .message-delete {
-    background: #f5e9e5;
-    color: #985446;
+  background: #f5e9e5;
+  color: #985446;
 }
 
 .message-delete:hover {
-    background: #ecd9d2;
+  background: #ecd9d2;
 }
 
 /* 登录页同步美化 */
 .login-box {
-    width: min(420px, calc(100% - 32px));
-    padding: 36px;
-    border: 1px solid var(--border-color);
-    border-radius: 24px;
-    box-shadow: 0 20px 60px rgba(32, 61, 53, 0.08);
+  width: min(420px, calc(100% - 32px));
+  padding: 36px;
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(32, 61, 53, 0.08);
 }
 
 .login-box h1 {
-    color: var(--text-color);
+  color: var(--text-color);
 }
 
 /* 手机屏幕改为单栏 */
 @media (max-width: 720px) {
-    .home-container {
-        grid-template-columns: 1fr;
-        padding: 20px 16px 40px;
-        gap: 18px;
-    }
+  .home-container {
+    grid-template-columns: 1fr;
+    padding: 20px 16px 40px;
+    gap: 18px;
+  }
 
-    .home-container section {
-        grid-column: 1;
-        grid-row: auto;
-        padding: 24px;
-    }
+  .home-container section {
+    grid-column: 1;
+    grid-row: auto;
+    padding: 24px;
+  }
 
-    .profile {
-        order: 0;
-    }
+  .profile {
+    order: 0;
+  }
 
-    .intro-assistant {
-        order: 1;
-    }
+  .intro-assistant {
+    order: 1;
+  }
 
-    .carousel {
-        order: 2;
-    }
+  .carousel {
+    order: 2;
+  }
 
-    .message-board {
-        order: 3;
-    }
+  .message-board {
+    order: 3;
+  }
 
-    #carousel-image {
-        height: 230px;
-    }
+  #carousel-image {
+    height: 230px;
+  }
 }
 /* 轮播图：完整显示照片，不拉伸、不裁切 */
 #carousel-image {
-    display: block;
-    width: 100%;
-    height: clamp(240px, 35vw, 420px);
-    object-fit: contain;
-    object-position: center;
-    background: #edf1e9;
-    border: 1px solid #dfe6dc;
-    border-radius: 16px;
+  display: block;
+  width: 100%;
+  height: clamp(240px, 35vw, 420px);
+  object-fit: contain;
+  object-position: center;
+  background: #edf1e9;
+  border: 1px solid #dfe6dc;
+  border-radius: 16px;
 }
 
 #carousel-caption {
-    margin: 16px 0 0;
-    text-align: center;
-    color: #52675b;
-    font-size: 15px;
+  margin: 16px 0 0;
+  text-align: center;
+  color: #52675b;
+  font-size: 15px;
 }
 /* 照片单独占满一行 */
 .home-container .carousel {
-    grid-column: 1 / -1;
-    grid-row: 2;
+  grid-column: 1 / -1;
+  grid-row: 2;
 }
 
 /* 留言和助手放到照片下面 */
 .home-container .message-board {
-    grid-column: 1;
-    grid-row: 3;
+  grid-column: 1;
+  grid-row: 3;
 }
 
 .home-container .intro-assistant {
-    grid-column: 2;
-    grid-row: 3;
+  grid-column: 2;
+  grid-row: 3;
 }
 
 /* 手机上按顺序排列 */
 @media (max-width: 720px) {
-    .home-container .carousel,
-    .home-container .message-board,
-    .home-container .intro-assistant {
-        grid-column: 1;
-        grid-row: auto;
-    }
+  .home-container .carousel,
+  .home-container .message-board,
+  .home-container .intro-assistant {
+    grid-column: 1;
+    grid-row: auto;
+  }
 
-    .home-container .profile {
-        order: 0;
-    }
+  .home-container .profile {
+    order: 0;
+  }
 
-    .home-container .carousel {
-        order: 1;
-    }
+  .home-container .carousel {
+    order: 1;
+  }
 
-    .home-container .intro-assistant {
-        order: 2;
-    }
+  .home-container .intro-assistant {
+    order: 2;
+  }
 
-    .home-container .message-board {
-        order: 3;
-    }
+  .home-container .message-board {
+    order: 3;
+  }
 }
 .home-container .profile-editor {
-    grid-column: 1 / -1;
-    width: 100%;
-    max-width: 760px;
-    justify-self: center;
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: 760px;
+  justify-self: center;
 }
 
 .profile-editor h1 {
-    text-align: left;
-    font-size: 30px;
+  text-align: left;
+  font-size: 30px;
 }
 
 .profile-editor label {
-    display: block;
-    margin-top: 18px;
-    font-weight: 600;
+  display: block;
+  margin-top: 18px;
+  font-weight: 600;
 }
 
 .profile-editor textarea {
-    display: block;
-    width: 100%;
-    margin: 8px 0 16px;
-    resize: vertical;
-    white-space: pre-wrap;
+  display: block;
+  width: 100%;
+  margin: 8px 0 16px;
+  resize: vertical;
+  white-space: pre-wrap;
 }
 
 #profile-details p {
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }

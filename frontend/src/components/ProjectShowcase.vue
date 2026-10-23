@@ -1,60 +1,58 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref } from "vue";
 
 interface Project {
-  title: string
-  content: string
+  title: string;
+  content: string;
 }
 
-const projects = ref<Project[]>([])
-const loading = ref(true)
-const error = ref('')
+const projects = ref<Project[]>([]);
+const loading = ref(true);
+const error = ref("");
 
 onMounted(async () => {
   try {
-    const response = await fetch('/api/profile', {
-      cache: 'no-store',
-    })
+    const response = await fetch("/api/profile", {
+      cache: "no-store",
+    });
 
-    if (!response.ok) throw new Error('读取项目经历失败。')
+    if (!response.ok) throw new Error("读取项目经历失败。");
 
-    const data = await response.json()
+    const data = await response.json();
 
     if (!Array.isArray(data.sections)) {
-      throw new Error('项目资料格式不正确。')
+      throw new Error("项目资料格式不正确。");
     }
 
     projects.value = data.sections
-      .filter((section: unknown) =>
-        section !== null &&
-        typeof section === 'object' &&
-        'type' in section &&
-        section.type === 'project' &&
-        'title' in section &&
-        typeof section.title === 'string' &&
-        'content' in section &&
-        typeof section.content === 'string'
+      .filter(
+        (section: unknown) =>
+          section !== null &&
+          typeof section === "object" &&
+          "type" in section &&
+          section.type === "project" &&
+          "title" in section &&
+          typeof section.title === "string" &&
+          "content" in section &&
+          typeof section.content === "string",
       )
       .map((section: Project) => ({
         title: section.title,
         content: section.content,
-      }))
+      }));
   } catch (err) {
-    error.value =
-      err instanceof Error ? err.message : '暂时无法读取项目。'
+    error.value = err instanceof Error ? err.message : "暂时无法读取项目。";
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-})
+});
 
 function getExcerpt(content: string) {
-  const text = content.trim().replace(/\s+/g, ' ')
+  const text = content.trim().replace(/\s+/g, " ");
 
-  if (!text) return '项目介绍整理中。'
+  if (!text) return "项目介绍整理中。";
 
-  return text.length > 90
-    ? `${text.slice(0, 90)}…`
-    : text
+  return text.length > 90 ? `${text.slice(0, 90)}…` : text;
 }
 </script>
 
@@ -62,9 +60,7 @@ function getExcerpt(content: string) {
   <div>
     <p v-if="loading" role="status">正在读取项目经历…</p>
     <p v-else-if="error" class="error" role="alert">{{ error }}</p>
-    <p v-else-if="projects.length === 0" class="empty">
-      项目经历整理中。
-    </p>
+    <p v-else-if="projects.length === 0" class="empty">项目经历整理中。</p>
 
     <div v-else class="project-grid">
       <article
@@ -75,7 +71,8 @@ function getExcerpt(content: string) {
         <div class="project-main">
           <header class="project-heading">
             <span class="project-icon" aria-hidden="true">
-              {{ index % 2 === 0 ? '⌘' : '</>' }}
+              <template v-if="index % 2 === 0">⌘</template>
+              <template v-else>&lt;/&gt;</template>
             </span>
             <h3>{{ project.title }}</h3>
           </header>
@@ -97,25 +94,25 @@ function getExcerpt(content: string) {
 
         <!-- 抽象装饰，不冒充项目截图 -->
         <div class="project-art" aria-hidden="true">
-  <span class="project-number">
-    {{ String(index + 1).padStart(2, '0') }}
-  </span>
+          <span class="project-number">
+            {{ String(index + 1).padStart(2, "0") }}
+          </span>
 
-  <img
-    v-if="project.title.includes('风控')"
-    class="project-illustration"
-    src="/illustrations/risk.png"
-    alt=""
-    loading="lazy"
-  >
+          <img
+            v-if="project.title.includes('风控')"
+            class="project-illustration"
+            src="/illustrations/risk.png"
+            alt=""
+            loading="lazy"
+          />
 
-  <img
-    v-else
-    class="project-illustration"
-    src="/illustrations/exploration.png"
-    alt=""
-        loading="lazy"
-  >
+          <img
+            v-else
+            class="project-illustration"
+            src="/illustrations/exploration.png"
+            alt=""
+            loading="lazy"
+          />
         </div>
       </article>
     </div>

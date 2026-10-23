@@ -1,79 +1,79 @@
 <script setup lang="ts">
-import { onUnmounted, ref } from 'vue'
+import { onUnmounted, ref } from "vue";
 
-const question = ref('')
-const reply = ref('')
-const error = ref('')
-const sending = ref(false)
+const question = ref("");
+const reply = ref("");
+const error = ref("");
+const sending = ref(false);
 
-let controller: AbortController | null = null
+let controller: AbortController | null = null;
 
 async function sendQuestion() {
-  if (sending.value) return
+  if (sending.value) return;
 
-  const message = question.value.trim()
+  const message = question.value.trim();
 
   if (!message) {
-    error.value = '请先输入问题。'
-    return
+    error.value = "请先输入问题。";
+    return;
   }
 
   if (message.length > 2000) {
-    error.value = '问题不能超过 2000 字。'
-    return
+    error.value = "问题不能超过 2000 字。";
+    return;
   }
 
-  sending.value = true
-  error.value = ''
-  reply.value = ''
+  sending.value = true;
+  error.value = "";
+  reply.value = "";
 
-  controller = new AbortController()
-  const timeout = window.setTimeout(() => controller?.abort(), 65000)
+  controller = new AbortController();
+  const timeout = window.setTimeout(() => controller?.abort(), 65000);
 
   try {
-    const response = await fetch('/api/chat', {
-      method: 'POST',
+    const response = await fetch("/api/chat", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ message }),
       signal: controller.signal,
-    })
+    });
 
-    const contentType = response.headers.get('content-type') || ''
+    const contentType = response.headers.get("content-type") || "";
 
-    if (!contentType.includes('application/json')) {
-      throw new Error('接口返回异常，请确认后端已启动且接口转发配置正确。')
+    if (!contentType.includes("application/json")) {
+      throw new Error("接口返回异常，请确认后端已启动且接口转发配置正确。");
     }
 
-    const data = await response.json()
+    const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || '请求失败，请稍后重试。')
+      throw new Error(data.error || "请求失败，请稍后重试。");
     }
 
-    if (typeof data.reply !== 'string' || !data.reply.trim()) {
-      throw new Error('暂未收到有效回复，请重试。')
+    if (typeof data.reply !== "string" || !data.reply.trim()) {
+      throw new Error("暂未收到有效回复，请重试。");
     }
 
-    reply.value = data.reply
+    reply.value = data.reply;
   } catch (err) {
-    if (err instanceof Error && err.name === 'AbortError') {
-      error.value = '等待回复超时，请稍后重试。'
+    if (err instanceof Error && err.name === "AbortError") {
+      error.value = "等待回复超时，请稍后重试。";
     } else {
       error.value =
-        err instanceof Error ? err.message : '连接失败，请稍后重试。'
+        err instanceof Error ? err.message : "连接失败，请稍后重试。";
     }
   } finally {
-    window.clearTimeout(timeout)
-    sending.value = false
-    controller = null
+    window.clearTimeout(timeout);
+    sending.value = false;
+    controller = null;
   }
 }
 
 onUnmounted(() => {
-  controller?.abort()
-})
+  controller?.abort();
+});
 </script>
 
 <template>
@@ -86,11 +86,11 @@ onUnmounted(() => {
       </div>
 
       <img
-  class="assistant-illustration"
-  src="/illustrations/assistant.png"
-  alt=""
-  aria-hidden="true"
->
+        class="assistant-illustration"
+        src="/illustrations/assistant.png"
+        alt=""
+        aria-hidden="true"
+      />
     </header>
 
     <form @submit.prevent="sendQuestion">
@@ -109,7 +109,7 @@ onUnmounted(() => {
       <div class="form-bottom">
         <span>{{ question.length }} / 2000</span>
         <button type="submit" :disabled="sending">
-          {{ sending ? '正在回复…' : '发送问题 →' }}
+          {{ sending ? "正在回复…" : "发送问题 →" }}
         </button>
       </div>
     </form>

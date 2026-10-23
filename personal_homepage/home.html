@@ -1,92 +1,82 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>我的个人主页</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body class="home-page">
-
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="home-page">
     <main class="home-container">
+      <!-- 第一部分：自我介绍 -->
+      <section class="profile">
+        <h1>你好，欢迎来到我的个人空间</h1>
+        <h2>关于我</h2>
 
-        <!-- 第一部分：自我介绍 -->
-        <section class="profile">
-    <h1>你好，欢迎来到我的个人空间</h1>
-    <h2>关于我</h2>
+        <p id="profile-status" role="status">正在加载资料…</p>
+        <div id="profile-details"></div>
 
-    <p id="profile-status" role="status">正在加载资料…</p>
-    <div id="profile-details"></div>
+        <a href="edit-profile.html">编辑个人资料</a>
+      </section>
 
-    <a href="edit-profile.html">编辑个人资料</a>
-</section>
+      <!-- 第二部分：轮播图 -->
 
-        <!-- 第二部分：轮播图 -->
-        
-<section class="carousel">
-    <h2>我的校园生活</h2>
+      <section class="carousel">
+        <h2>我的校园生活</h2>
 
-    <img
-        id="carousel-image"
-        src="images/草地音乐节.jpg"
-        alt="草地音乐节"
-    >
+        <img id="carousel-image" src="images/草地音乐节.jpg" alt="草地音乐节" />
 
-    <p id="carousel-caption">草地音乐节</p>
-</section>
+        <p id="carousel-caption">草地音乐节</p>
+      </section>
 
+      <!-- 第三部分：留言板 -->
 
-        <!-- 第三部分：留言板 -->
-        
-<section class="message-board">
-    <h2>留言板</h2>
-    <p>欢迎留下你的想法～</p>
+      <section class="message-board">
+        <h2>留言板</h2>
+        <p>欢迎留下你的想法～</p>
 
-    <textarea
-        id="message-input"
-        placeholder="写下你想说的话"
-        rows="4"
-    ></textarea>
-
-    <button id="message-button" type="button">
-        发布留言
-    </button>
-
-    <div id="message-list"></div>
-</section>
-
-    <!-- 个人介绍助手 -->
-<section class="intro-assistant">
-    <h2>个人介绍助手</h2>
-    <p>想了解我？可以向助手提问。</p>
-
-    <form id="assistant-form">
-        <label for="assistant-question">你的问题</label>
         <textarea
+          id="message-input"
+          placeholder="写下你想说的话"
+          rows="4"
+        ></textarea>
+
+        <button id="message-button" type="button">发布留言</button>
+
+        <div id="message-list"></div>
+      </section>
+
+      <!-- 个人介绍助手 -->
+      <section class="intro-assistant">
+        <h2>个人介绍助手</h2>
+        <p>想了解我？可以向助手提问。</p>
+
+        <form id="assistant-form">
+          <label for="assistant-question">你的问题</label>
+          <textarea
             id="assistant-question"
             placeholder="例如：主页主人正在学习什么？"
             rows="3"
             maxlength="2000"
             required
-        ></textarea>
+          ></textarea>
 
-        <button id="assistant-send" type="submit">
-            发送问题
-        </button>
-    </form>
+          <button id="assistant-send" type="submit">发送问题</button>
+        </form>
 
-    <p
-        id="assistant-reply"
-        role="status"
-        aria-live="polite"
-        style="white-space: pre-wrap;"
-    >你好！你想了解主页主人的哪些信息？</p>
-</section>
+        <p
+          id="assistant-reply"
+          role="status"
+          aria-live="polite"
+          style="white-space: pre-wrap"
+        >
+          你好！你想了解主页主人的哪些信息？
+        </p>
+      </section>
     </main>
 
     <script src="script.js"></script>
     <script src="assistant.js"></script>
     <script src="profile.js"></script>
-</body>
+  </body>
 </html>

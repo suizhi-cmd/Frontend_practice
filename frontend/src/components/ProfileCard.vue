@@ -1,64 +1,63 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref } from "vue";
 
 interface ProfileSection {
-  title: string
-  content: string
-  type?: 'intro' | 'project'
+  title: string;
+  content: string;
+  type?: "intro" | "project";
 }
 
 // 定义个人资料的数据结构
 interface Profile {
-  school: string
-  college: string
-  major: string
-  interests: string
-  learning: string
-  currentProject: string
-  pastProjects: string
-  sections: ProfileSection[]
+  school: string;
+  college: string;
+  major: string;
+  interests: string;
+  learning: string;
+  currentProject: string;
+  pastProjects: string;
+  sections: ProfileSection[];
 }
 
-const profile = ref<Profile | null>(null)
-const loading = ref(true)
-const error = ref('')
+const profile = ref<Profile | null>(null);
+const loading = ref(true);
+const error = ref("");
 
 // 给每个字段配上中文名称
 const fields: { key: keyof Profile; label: string }[] = [
-  { key: 'school', label: '学校' },
-  { key: 'college', label: '学院' },
-  { key: 'major', label: '专业' },
-  { key: 'interests', label: '兴趣' },
-  { key: 'learning', label: '正在学习' },
-  { key: 'currentProject', label: '正在进行的项目' },
-  { key: 'pastProjects', label: '做过的项目' },
-]
+  { key: "school", label: "学校" },
+  { key: "college", label: "学院" },
+  { key: "major", label: "专业" },
+  { key: "interests", label: "兴趣" },
+  { key: "learning", label: "正在学习" },
+  { key: "currentProject", label: "正在进行的项目" },
+  { key: "pastProjects", label: "做过的项目" },
+];
 
 // 组件出现在页面上时，读取后端资料
 onMounted(async () => {
   try {
-    const response = await fetch('/api/profile')
+    const response = await fetch("/api/profile");
 
     if (!response.ok) {
-      throw new Error('读取资料失败，请确认后端正在运行。')
+      throw new Error("读取资料失败，请确认后端正在运行。");
     }
 
-    const data: Profile = await response.json()
-    profile.value = data
+    const data: Profile = await response.json();
+    profile.value = data;
   } catch (err) {
-    error.value =
-      err instanceof Error ? err.message : '暂时无法读取资料。'
+    error.value = err instanceof Error ? err.message : "暂时无法读取资料。";
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-})
+});
 
 // 将逗号、顿号或换行分隔的内容转为列表
 function splitItems(text: string) {
   return text
     .split(/[，,、；;\n]+/)
-    .map(item => item.trim())
-    .filter(Boolean)
+    .map((item) => item.trim())
+    .filter(Boolean);
 }
 </script>
 
@@ -75,21 +74,23 @@ function splitItems(text: string) {
             <h3>教育背景</h3>
           </header>
 
-          <strong>{{ profile.school || '暂未填写学校' }}</strong>
+          <strong>{{ profile.school || "暂未填写学校" }}</strong>
           <p>{{ profile.college }}</p>
           <p>{{ profile.major }}</p>
 
           <img
-  class="card-art"
-  src="/illustrations/education.png"
-  alt=""
-  aria-hidden="true"
->
+            class="card-art"
+            src="/illustrations/education.png"
+            alt=""
+            aria-hidden="true"
+          />
         </article>
 
         <article class="info-card exploration">
           <header class="card-heading">
-            <span class="card-icon code-icon" aria-hidden="true">&lt;/&gt;</span>
+            <span class="card-icon code-icon" aria-hidden="true"
+              >&lt;/&gt;</span
+            >
             <h3>最近在探索</h3>
           </header>
 
@@ -104,11 +105,11 @@ function splitItems(text: string) {
           <p v-else>持续探索中。</p>
 
           <img
-  class="card-art"
-  src="/illustrations/exploration.png"
-  alt=""
-  aria-hidden="true"
->
+            class="card-art"
+            src="/illustrations/exploration.png"
+            alt=""
+            aria-hidden="true"
+          />
         </article>
 
         <article class="info-card interests">
@@ -128,11 +129,11 @@ function splitItems(text: string) {
           <p v-else>等待记录更多生活。</p>
 
           <img
-  class="card-art"
-  src="/illustrations/interests.png"
-  alt=""
-  aria-hidden="true"
->
+            class="card-art"
+            src="/illustrations/interests.png"
+            alt=""
+            aria-hidden="true"
+          />
         </article>
       </div>
 
@@ -143,7 +144,7 @@ function splitItems(text: string) {
         <dl class="profile-details">
           <div v-for="field in fields" :key="field.key">
             <dt>{{ field.label }}</dt>
-            <dd>{{ profile[field.key] || '暂未填写' }}</dd>
+            <dd>{{ profile[field.key] || "暂未填写" }}</dd>
           </div>
         </dl>
       </details>
@@ -152,13 +153,13 @@ function splitItems(text: string) {
       <div class="intro-sections">
         <article
           v-for="(section, index) in profile.sections.filter(
-            item => item.type !== 'project'
+            (item) => item.type !== 'project',
           )"
           :key="index"
           class="intro-section"
         >
           <h3>{{ section.title }}</h3>
-          <p>{{ section.content || '内容整理中。' }}</p>
+          <p>{{ section.content || "内容整理中。" }}</p>
         </article>
       </div>
     </template>
@@ -335,7 +336,8 @@ dd {
   }
 }
 @media (max-width: 600px) {
-  .overview-grid, .intro-sections {
+  .overview-grid,
+  .intro-sections {
     grid-template-columns: 1fr;
   }
   .info-card {
@@ -350,5 +352,4 @@ dd {
     gap: 4px;
   }
 }
-
 </style>

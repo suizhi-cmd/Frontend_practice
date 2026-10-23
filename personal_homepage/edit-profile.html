@@ -1,38 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>编辑个人资料</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body class="home-page">
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="home-page">
     <main class="home-container">
-        <section class="profile-editor">
-            <h1>编辑个人资料</h1>
-            <p>保存后，主页和 AI 助手将使用新资料。</p>
+      <section class="profile-editor">
+        <h1>编辑个人资料</h1>
+        <p>保存后，主页和 AI 助手将使用新资料。</p>
 
-            <form id="profile-edit-form">
-                <div id="profile-fields"></div>
+        <form id="profile-edit-form">
+          <div id="profile-fields"></div>
 
-                <label for="edit-password">编辑密码</label>
-                <input
-                    id="edit-password"
-                    type="password"
-                    autocomplete="current-password"
-                    required
-                >
+          <label for="edit-password">编辑密码</label>
+          <input
+            id="edit-password"
+            type="password"
+            autocomplete="current-password"
+            required
+          />
 
-                <button id="save-profile" type="submit" disabled>
-                    保存资料
-                </button>
-            </form>
+          <button id="save-profile" type="submit" disabled>保存资料</button>
+        </form>
 
-            <p id="edit-status" role="status">正在读取资料…</p>
-            <a href="home.html">返回主页</a>
-        </section>
+        <p id="edit-status" role="status">正在读取资料…</p>
+        <a href="home.html">返回主页</a>
+      </section>
     </main>
 
     <script src="edit-profile.js"></script>
-</body>
+  </body>
 </html>
