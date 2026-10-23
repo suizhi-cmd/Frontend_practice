@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
+import LoginPanel from './components/LoginPanel.vue'
 import ProfileCard from './components/ProfileCard.vue'
 import PhotoCarousel from './components/PhotoCarousel.vue'
 import ProfileEditor from './components/ProfileEditor.vue'
@@ -76,18 +77,62 @@ async function loadLifePhotos() {
   }
 }
 
-onMounted(loadLifePhotos)
+const authenticated = ref(false)
+const checkingSession = ref(true)
+const sessionError = ref('')
+const loggingOut = ref(false)
+
+async function checkSession() {
+  checkingSession.value = true
+  sessionError.value = ''
+  try {
+    const response = await fetch('/api/auth/session', { cache: 'no-store', credentials: 'same-origin', signal: AbortSignal.timeout(15000) })
+    if (!(response.headers.get('Content-Type') || '').includes('application/json')) throw new Error('登录接口尚未就绪，请稍后刷新。')
+    const data = await response.json()
+    if (!response.ok) throw new Error(data.error || '无法检查登录状态。')
+    authenticated.value = data.authenticated === true
+    if (authenticated.value) await loadLifePhotos()
+  } catch (error) {
+    sessionError.value = error instanceof Error ? error.message : '连接失败，请重试。'
+  } finally { checkingSession.value = false }
+}
+
+async function handleLoggedIn() {
+  await checkSession()
+  if (!authenticated.value && !sessionError.value) sessionError.value = '登录状态未能保存，请允许本站使用 Cookie 后重试。'
+}
+
+async function logout() {
+  if (loggingOut.value) return
+  if (hasUnsavedChanges.value && !window.confirm('资料尚未保存，确定放弃修改并退出吗？')) return
+  loggingOut.value = true
+  try {
+    const response = await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin', signal: AbortSignal.timeout(15000) })
+    if (!response.ok) throw new Error('退出失败，请稍后重试。')
+    authenticated.value = false
+    editing.value = false
+    managingPhotos.value = false
+    hasUnsavedChanges.value = false
+    lifePhotos.value = []
+    sessionError.value = ''
+    window.history.replaceState(null, '', window.location.pathname + window.location.search)
+  } catch (error) { window.alert(error instanceof Error ? error.message : '退出失败，请重试。') }
+  finally { loggingOut.value = false }
+}
+
+onMounted(checkSession)
 
 // 退出照片管理后，更新照片墙
 watch(managingPhotos, (current, previous) => {
-  if (previous && !current) {
+  if (authenticated.value && previous && !current) {
     loadLifePhotos()
   }
 })
 </script>
 
 <template>
-  <div id="page-top" class="portfolio">
+  <LoginPanel v-if="!authenticated" :checking="checkingSession" :check-error="sessionError" @logged-in="handleLoggedIn" @retry="checkSession" />
+  <div v-else id="page-top" class="portfolio">
     <header class="site-header">
       <img
   class="header-banner"
@@ -115,6 +160,7 @@ watch(managingPhotos, (current, previous) => {
         </nav>
 
         <div class="management">
+  <button type="button" :disabled="loggingOut" @click="logout">{{ loggingOut ? '正在退出…' : '退出登录' }}</button>
   <details
     v-if="!editing && !managingPhotos"
     class="management-menu"

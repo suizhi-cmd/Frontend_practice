@@ -38,6 +38,7 @@ app.use("/uploads", express.static(uploadsPath, {
 
 // 让后端可以接收 JSON 格式的消息
 app.use(express.json({ limit: "128kb" }));
+require("./visitor-auth.cjs")(app);
 
 // 检查后端是否正常运行，不返回密钥
 app.get("/api/health", (req, res) => {

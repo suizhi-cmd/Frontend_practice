@@ -1,3 +1,4 @@
+import { requireVisitor } from '../lib/visitor-auth.mjs'
 import { getStore } from '@netlify/blobs'
 import { createHmac } from 'node:crypto'
 import initialProfile from '../../data/profile.json' with { type: 'json' }
@@ -27,7 +28,7 @@ async function reserve(store, key, bucket, limit) {
   return false
 }
 
-export default async function handler(request, context) {
+async function handleRequest(request, context) {
   if (request.method !== 'POST') {
     return json({ error: '请在网页助手中输入问题后发送。' }, 405, { Allow: 'POST' })
   }
@@ -120,3 +121,12 @@ ${JSON.stringify(profile)}`,
 }
 
 export const config = { path: '/api/chat' }
+
+export default async function handler(request, context) {
+  const rejected = requireVisitor(request)
+  if (rejected) return rejected
+  const response = await handleRequest(request, context)
+  response.headers.set('Cache-Control', 'private, no-store')
+  response.headers.set('Vary', 'Cookie')
+  return response
+}

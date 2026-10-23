@@ -1,3 +1,4 @@
+import { requireVisitor } from '../lib/visitor-auth.mjs'
 import { getStore } from '@netlify/blobs'
 import { timingSafeEqual } from 'node:crypto'
 
@@ -80,7 +81,7 @@ function cleanProfile(body) {
   return result
 }
 
-export default async function handler(request) {
+async function handleRequest(request) {
   const pathname = new URL(request.url).pathname
 
   if (pathname !== '/api/profile') {
@@ -167,4 +168,12 @@ export default async function handler(request) {
 
 export const config = {
   path: ['/api/profile'],
+}
+export default async function handler(request, context) {
+  const rejected = requireVisitor(request)
+  if (rejected) return rejected
+  const response = await handleRequest(request, context)
+  response.headers.set('Cache-Control', 'private, no-store')
+  response.headers.set('Vary', 'Cookie')
+  return response
 }
