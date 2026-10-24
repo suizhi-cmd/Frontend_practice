@@ -152,7 +152,7 @@ ${JSON.stringify(profile)}`,
 export const config = { path: "/api/chat" };
 
 export default async function handler(request, context) {
-  const rejected = requireVisitor(request);
+  const rejected = await requireVisitor(request);
   if (rejected) return rejected;
   const response = await handleRequest(request, context);
   response.headers.set("Cache-Control", "private, no-store");

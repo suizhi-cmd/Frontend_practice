@@ -1,6 +1,8 @@
 import { requireVisitor } from "../lib/visitor-auth.mjs";
 import { getStore } from "@netlify/blobs";
-import { randomUUID, timingSafeEqual } from "node:crypto";
+import { randomUUID } from "node:crypto";
+import { authorizeAdmin } from "../lib/admin-auth.mjs";
+import { reserveImageSlot } from "../lib/image-quota.mjs";
 import sharp from "sharp";
 import initialPhotos from "../../data/photos.json" with { type: "json" };
 
@@ -20,16 +22,6 @@ function json(value, status = 200, headers = {}) {
 
 function fail(message, status = 400) {
   throw Object.assign(new Error(message), { status });
-}
-
-function authorize(request) {
-  const expected = process.env.PROFILE_EDIT_PASSWORD;
-  if (!expected) fail("线上尚未设置编辑密码。", 503);
-  const actual = Buffer.from(request.headers.get("X-Edit-Password") || "");
-  const correct = Buffer.from(expected);
-  if (actual.length !== correct.length || !timingSafeEqual(actual, correct)) {
-    fail("编辑密码错误。", 401);
-  }
 }
 
 async function readList(store) {
@@ -132,6 +124,7 @@ async function upload(request, store, images) {
   const id = `${randomUUID()}.webp`;
   const photo = { src: `/api/photo?id=${id}`, title: title.trim() };
   // 保存成功后不会删除图片；移出轮播只修改清单。
+  await reserveImageSlot(store, images);
   await images.set(id, new Uint8Array(output).buffer);
   try {
     await writeList(store, [...photos, photo], etag);
@@ -149,7 +142,7 @@ async function upload(request, store, images) {
   return json({ message: "上传成功，照片已加入轮播。", photo }, 201);
 }
 
-async function handleRequest(request) {
+async function handleRequest(request, context) {
   const url = new URL(request.url);
   const path = url.pathname;
   const methods = {
@@ -164,7 +157,7 @@ async function handleRequest(request) {
     });
   }
   try {
-    if (request.method !== "GET") authorize(request);
+    if (request.method !== "GET") await authorizeAdmin(request, context);
     const store = getStore({
       name: "portfolio-content",
       consistency: "strong",
@@ -225,7 +218,7 @@ export const config = {
 };
 
 export default async function handler(request, context) {
-  const rejected = requireVisitor(request);
+  const rejected = await requireVisitor(request);
   if (rejected) return rejected;
   const response = await handleRequest(request, context);
   response.headers.set("Cache-Control", "private, no-store");

@@ -1,6 +1,6 @@
 import { requireVisitor } from "../lib/visitor-auth.mjs";
 import { getStore } from "@netlify/blobs";
-import { timingSafeEqual } from "node:crypto";
+import { authorizeAdmin } from "../lib/admin-auth.mjs";
 
 import initialProfile from "../../data/profile.json" with { type: "json" };
 
@@ -23,13 +23,6 @@ function json(data, status = 200, extraHeaders = {}) {
       ...extraHeaders,
     },
   });
-}
-
-function passwordMatches(input, expected) {
-  const actual = Buffer.from(input || "");
-  const correct = Buffer.from(expected);
-
-  return actual.length === correct.length && timingSafeEqual(actual, correct);
 }
 
 function cleanProfile(body) {
@@ -75,7 +68,7 @@ function cleanProfile(body) {
   return result;
 }
 
-async function handleRequest(request) {
+async function handleRequest(request, context) {
   const pathname = new URL(request.url).pathname;
 
   if (pathname !== "/api/profile") {
@@ -88,14 +81,10 @@ async function handleRequest(request) {
 
   // 保存资料前，先验证编辑密码。
   if (request.method === "PUT") {
-    const expected = process.env.PROFILE_EDIT_PASSWORD;
-
-    if (!expected) {
-      return json({ error: "线上尚未设置编辑密码。" }, 503);
-    }
-
-    if (!passwordMatches(request.headers.get("X-Edit-Password"), expected)) {
-      return json({ error: "编辑密码错误。" }, 401);
+    try {
+      await authorizeAdmin(request, context);
+    } catch (error) {
+      return json({ error: error.message }, error.status || 503);
     }
 
     const contentType = request.headers.get("Content-Type") || "";
@@ -164,7 +153,7 @@ export const config = {
   path: ["/api/profile"],
 };
 export default async function handler(request, context) {
-  const rejected = requireVisitor(request);
+  const rejected = await requireVisitor(request);
   if (rejected) return rejected;
   const response = await handleRequest(request, context);
   response.headers.set("Cache-Control", "private, no-store");

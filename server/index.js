@@ -8,18 +8,19 @@ const { randomUUID } = require("node:crypto");
 const { rateLimit } = require("express-rate-limit");
 
 // 从本文件所在目录读取密钥配置
-dotenv.config({ path: path.join(__dirname, ".env") });
+if (process.env.SKIP_DOTENV !== "1")
+  dotenv.config({ path: path.join(__dirname, ".env") });
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
 // 新上传的图片统一存放在后端目录
 const uploadsPath = path.join(__dirname, "uploads");
 
-// 接收单张图片，最大 10 MB
+// 接收单张图片，最大 4 MB，与线上一致
 const receivePhoto = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 10 * 1024 * 1024,
+    fileSize: 4 * 1024 * 1024,
     files: 1,
     fields: 1,
     fieldSize: 1024,
@@ -27,7 +28,10 @@ const receivePhoto = multer({
   },
 }).single("photo");
 
-// 只公开 uploads 目录，不公开整个 server 目录
+// Authenticate both API and uploaded images before exposing their contents.
+app.use(express.json({ limit: "128kb" }));
+require("./visitor-auth.cjs")(app);
+require("./messages.cjs")(app);
 app.use(
   "/uploads",
   express.static(uploadsPath, {
@@ -38,10 +42,6 @@ app.use(
     },
   }),
 );
-
-// 让后端可以接收 JSON 格式的消息
-app.use(express.json({ limit: "128kb" }));
-require("./visitor-auth.cjs")(app);
 
 // 检查后端是否正常运行，不返回密钥
 app.get("/api/health", (req, res) => {
@@ -94,16 +94,6 @@ let savingProfile = false;
 
 // 修改资料必须验证编辑密码
 app.put("/api/profile", async (req, res) => {
-  const password = process.env.PROFILE_EDIT_PASSWORD;
-
-  if (!password) {
-    return res.status(503).json({ error: "请先在 .env 设置编辑密码并重启。" });
-  }
-
-  if (req.get("X-Edit-Password") !== password) {
-    return res.status(401).json({ error: "编辑密码错误。" });
-  }
-
   const profile = {};
 
   for (const field of profileFields) {
@@ -209,20 +199,6 @@ app.get("/api/photos", async (req, res) => {
 let savingPhotos = false;
 
 app.put("/api/photos", async (req, res) => {
-  const password = process.env.PROFILE_EDIT_PASSWORD;
-
-  if (!password) {
-    return res.status(503).json({
-      error: "后端尚未设置编辑密码。",
-    });
-  }
-
-  if (req.get("X-Edit-Password") !== password) {
-    return res.status(401).json({
-      error: "编辑密码错误。",
-    });
-  }
-
   const photos = req.body;
 
   // 允许空列表，表示暂时不展示照片
@@ -311,21 +287,6 @@ app.put("/api/photos", async (req, res) => {
 });
 
 app.post("/api/photos/upload", (req, res) => {
-  const password = process.env.PROFILE_EDIT_PASSWORD;
-
-  // 先验证密码，再接收文件
-  if (!password) {
-    return res.status(503).json({
-      error: "后端尚未设置编辑密码。",
-    });
-  }
-
-  if (req.get("X-Edit-Password") !== password) {
-    return res.status(401).json({
-      error: "编辑密码错误。",
-    });
-  }
-
   // 与修改照片清单共用同一把保存锁
   if (savingPhotos) {
     return res.status(409).json({
@@ -344,7 +305,7 @@ app.post("/api/photos/upload", (req, res) => {
         return res.status(400).json({
           error:
             uploadError.code === "LIMIT_FILE_SIZE"
-              ? "照片不能超过 10 MB。"
+              ? "照片不能超过 4 MB。"
               : "上传失败，每次请选择一张照片和一条说明。",
         });
       }
@@ -417,6 +378,17 @@ app.post("/api/photos/upload", (req, res) => {
 
       await fs.mkdir(uploadsPath, { recursive: true });
 
+      if (imageBuffer.byteLength > 4 * 1024 * 1024) {
+        return res.status(413).json({ error: "处理后的图片不能超过 4 MB。" });
+      }
+      // Removing a carousel entry must not reset the retained-image quota.
+      const retained = (await fs.readdir(uploadsPath)).filter((name) =>
+        name.endsWith(".webp"),
+      );
+      if (retained.length >= 200)
+        return res
+          .status(409)
+          .json({ error: "累计图片已达 200 张，请站主整理存储。" });
       const filename = `${randomUUID()}.webp`;
       newFilePath = path.join(uploadsPath, filename);
 
@@ -571,7 +543,9 @@ ${JSON.stringify(profile)}
   }
 });
 
-app.listen(port, "127.0.0.1", () => {
-  console.log(`打开个人主页：http://127.0.0.1:${port}/home.html`);
-  console.log(`检查后端：http://127.0.0.1:${port}/api/health`);
-});
+module.exports = app;
+if (require.main === module)
+  app.listen(port, "127.0.0.1", () => {
+    console.log(`打开个人主页：http://127.0.0.1:${port}/home.html`);
+    console.log(`检查后端：http://127.0.0.1:${port}/api/health`);
+  });

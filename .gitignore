@@ -16,3 +16,5 @@ Thumbs.db
 # 本机上传的图片及保存过程中的临时文件
 server/uploads/
 server/*.json.tmp
+# 本地留言和限流数据不提交，也不与云端混用
+server/.local-messages/

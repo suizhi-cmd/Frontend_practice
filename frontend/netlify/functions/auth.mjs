@@ -6,6 +6,7 @@ import {
   createSession,
   sessionCookie,
   hasVisitorSession,
+  revokeSession,
 } from "../lib/visitor-auth.mjs";
 
 async function allowAttempt(context) {
@@ -48,14 +49,25 @@ export default async function handler(request, context) {
     if (origin && origin !== new URL(request.url).origin)
       return json({ error: "请求来源不正确。" }, 403);
   }
-  if (path === "/api/auth/logout")
-    return json({ message: "已退出登录。" }, 200, {
-      "Set-Cookie": sessionCookie(""),
-    });
+  if (path === "/api/auth/logout") {
+    try {
+      await revokeSession(request);
+      return json({ message: "已退出登录。" }, 200, {
+        "Set-Cookie": sessionCookie(""),
+      });
+    } catch {
+      return json({ error: "退出失败，请稍后重试。" }, 503);
+    }
+  }
   if (!process.env.VISITOR_PASSWORD)
     return json({ error: "访客登录密码尚未配置，请联系主页主人。" }, 503);
-  if (path === "/api/auth/session")
-    return json({ authenticated: hasVisitorSession(request) });
+  if (path === "/api/auth/session") {
+    try {
+      return json({ authenticated: await hasVisitorSession(request) });
+    } catch {
+      return json({ error: "登录状态暂时无法验证，请稍后重试。" }, 503);
+    }
+  }
   if (
     !(request.headers.get("Content-Type") || "")
       .toLowerCase()
@@ -86,7 +98,7 @@ export default async function handler(request, context) {
     if (!passwordMatches(password))
       return json({ error: "访问密码不正确，请重新输入。" }, 401);
     return json({ authenticated: true }, 200, {
-      "Set-Cookie": sessionCookie(createSession()),
+      "Set-Cookie": sessionCookie(await createSession()),
     });
   } catch (error) {
     console.error("访客登录服务异常：", error.name);
